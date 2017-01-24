@@ -17,13 +17,17 @@ import android.widget.ListView;
 import com.kokayapp.filetransfer.FileInfo;
 import com.kokayapp.filetransfer.R;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.kokayapp.filetransfer.SendFiles.FileSelectionActivity.fileList;
 
 /**
  * Created by Koji on 12/26/2016.
  */
 
-public class DocumentFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class DocumentFragment extends Fragment {
     private Cursor cursor;
     private DocumentListAdapter documentListAdapter;
 
@@ -48,6 +52,11 @@ public class DocumentFragment extends Fragment implements AdapterView.OnItemClic
     };
     private String sortOrder = null;
 
+    public static DocumentFragment newInstance() {
+        DocumentFragment fragment = new DocumentFragment();
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,34 +65,33 @@ public class DocumentFragment extends Fragment implements AdapterView.OnItemClic
         documentListAdapter = new DocumentListAdapter(getContext(), cursor);
     }
 
+    List<File> files = new ArrayList<>();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.file_list, container, false);
         ListView listView = (ListView) view.findViewById(R.id.file_list);
         listView.setAdapter(documentListAdapter);
-        listView.setOnItemClickListener(this);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                cursor.moveToPosition(position);
+                FileInfo file = new FileInfo(cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA)));
+                long size = cursor.getLong(cursor.getColumnIndex(MediaStore.Files.FileColumns.SIZE));
+
+                if (fileList.contains(file)) {
+                    fileList.remove(fileList.indexOf(file));
+                } else {
+                    fileList.add(file);
+                }
+                documentListAdapter.notifyDataSetChanged();
+            }
+        });
         return view;
     }
 
     @Override
     public String toString() {
         return "Document";
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        cursor.moveToPosition(position);
-        CheckBox checkBox = (CheckBox) view.findViewById(R.id.file_check_box);
-        String uri = cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA));
-        long size = cursor.getLong(cursor.getColumnIndex(MediaStore.Files.FileColumns.SIZE));
-        if (fileList.contains(uri)) {
-            fileList.remove(uri);
-            checkBox.setChecked(false);
-        } else {
-            fileList.add(new FileInfo(uri, size));
-            checkBox.setChecked(true);
-        }
-        documentListAdapter.notifyDataSetChanged();
     }
 }

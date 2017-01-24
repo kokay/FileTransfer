@@ -99,7 +99,7 @@ public class SendingFilesFragment extends Fragment {
                 out = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
                 for (FileInfo fileInfo : fileList) {
                     fileListLocal.add(new FileInfo(fileInfo));
-                    out.write(fileInfo.getUri() + " " + fileInfo.getTitle() + " " + fileInfo.getSize() + "\r\n");
+                    out.write(fileInfo.getName() + " " + fileInfo.length() + "\r\n");
                 }
                 out.flush();
             } catch (IOException e) {

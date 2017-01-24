@@ -112,7 +112,7 @@ public class ReceivingFilesActivity extends AppCompatActivity {
                     out.flush();
 
                     int count;
-                    while((fileInfo.getSoFar() != fileInfo.getSize()) && (count = in.read(buf)) > 0) {
+                    while((fileInfo.getSoFar() != fileInfo.length()) && (count = in.read(buf)) > 0) {
                         fileInfo.addSoFar(count);
                         publishProgress();
                     }

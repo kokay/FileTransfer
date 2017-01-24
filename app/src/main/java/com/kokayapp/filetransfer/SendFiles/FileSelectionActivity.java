@@ -21,6 +21,7 @@ import android.widget.ImageView;
 
 import com.kokayapp.filetransfer.FileInfo;
 import com.kokayapp.filetransfer.R;
+import com.kokayapp.filetransfer.SendFiles.Document.DocumentFragment;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -34,6 +35,8 @@ public class FileSelectionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_selection);
+
+        fileFragments.add(DocumentFragment.newInstance());
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
         viewPager.setAdapter(new FragmentListPagerAdapter(getSupportFragmentManager(), fileFragments));

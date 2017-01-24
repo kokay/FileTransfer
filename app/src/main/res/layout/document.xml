@@ -17,10 +17,9 @@ android:padding="5dp">
         android:layout_centerVertical="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/file_image"
         android:padding="5dp"
-        android:layout_toStartOf="@+id/file_check_box"
-        android:layout_toLeftOf="@+id/file_check_box">
+        android:layout_toLeftOf="@+id/file_check_box"
+        android:layout_toRightOf="@+id/file_image">
 
         <TextView
             android:layout_width="wrap_content"

@@ -45,7 +45,7 @@ public class FileListAdapter extends ArrayAdapter {
         }
 
         TextView title = (TextView) convertView.findViewById(R.id.processing_file_title);
-        title.setText(selectedFiles.get(position).getTitle());
+        title.setText(selectedFiles.get(position).getName());
 
         TextView progressTv = (TextView) convertView.findViewById(R.id.processing_file_progress_tv);
         progressTv.setText(selectedFiles.get(position).getStringProgress());

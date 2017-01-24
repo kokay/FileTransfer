@@ -2,16 +2,14 @@ package com.kokayapp.filetransfer;
 
 import android.net.Uri;
 
+import java.io.File;
 import java.util.StringTokenizer;
 
 /**
  * Created by Koji on 1/14/2017.
  */
 
-public class FileInfo {
-    private final String uri;
-    private final String title;
-    private final long size;
+public class FileInfo extends File {
     private long soFar;
     private boolean checked;
 
@@ -23,25 +21,21 @@ public class FileInfo {
     private static final long GIGABYTE = MEGABYTE << 10;
 
     public FileInfo(FileInfo rhs) {
-        this.uri = rhs.uri;
-        this.title = rhs.uri;
-        this.size = rhs.size;
+        super(rhs.getPath());
         this.soFar = rhs.soFar;
         this.checked = true;
         this.fileSizeDivisor = rhs.fileSizeDivisor;
         this.type = rhs.type;
     }
 
-    public FileInfo(String uri, long size) {
-        this.uri = uri;
-        this.title = uri;
-        this.size = size;
+    public FileInfo(String path) {
+        super(path);
         this.soFar = 0;
         this.checked = true;
-        if(size >= GIGABYTE) {
+        if(this.length() >= GIGABYTE) {
             fileSizeDivisor = MEGABYTE;
             type = "GB";
-        } else if (size >= MEGABYTE) {
+        } else if (this.length() >= MEGABYTE) {
             fileSizeDivisor = BYTE;
             type = "MB";
         } else {
@@ -52,28 +46,16 @@ public class FileInfo {
 
     public static FileInfo parse(String line) {
         StringTokenizer st = new StringTokenizer(line);
-        return new FileInfo(st.nextToken(), Long.parseLong(st.nextToken()));
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public long getSize() {
-        return size;
+        return new FileInfo(st.nextToken());
     }
 
     public String getStringProgress() {
         return (soFar / (float) fileSizeDivisor) + " " + type + " / "
-                + (size / (float) fileSizeDivisor) + " " + type;
+                + (this.length() / (float) fileSizeDivisor) + " " + type;
     }
 
     public int getIntProgress() {
-        return (int)((soFar / (float) size) * 100);
+        return (int)((soFar / (float) this.length()) * 100);
     }
 
     public boolean isChecked() {
@@ -94,7 +76,11 @@ public class FileInfo {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof String) return this.uri.equals(obj);
-        else return this.uri.equals(((FileInfo)obj).getUri());
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

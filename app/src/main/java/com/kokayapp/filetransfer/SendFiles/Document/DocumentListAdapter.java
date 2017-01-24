@@ -10,6 +10,7 @@ import android.widget.CheckBox;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
+import com.kokayapp.filetransfer.FileInfo;
 import com.kokayapp.filetransfer.R;
 
 import static com.kokayapp.filetransfer.SendFiles.FileSelectionActivity.fileList;
@@ -35,8 +36,8 @@ public class DocumentListAdapter extends CursorAdapter {
         t = (TextView) view.findViewById(R.id.document_size);
         t.setText(cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.SIZE)));
         CheckBox checkBox = (CheckBox) view.findViewById(R.id.file_check_box);
-        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA));
-        if (!fileList.contains(path)) {
+        FileInfo fileInfo = new FileInfo(cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA)));
+        if (!fileList.contains(fileInfo)) {
             checkBox.setChecked(false);
         } else {
             checkBox.setChecked(true);
