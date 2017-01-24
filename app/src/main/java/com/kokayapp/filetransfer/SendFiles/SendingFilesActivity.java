@@ -26,7 +26,7 @@ public class SendingFilesActivity extends AppCompatActivity {
             sendingFilesFragments.add(SendingFilesFragment.newInstance(position));
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.device_view_pager);
-        viewPager.setAdapter(new SendingFilesFragmentPagerAdapter(getSupportFragmentManager(), sendingFilesFragments));
+        viewPager.setAdapter(new FragmentListPagerAdapter(getSupportFragmentManager(), sendingFilesFragments));
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.device_tabs);
         tabLayout.setupWithViewPager(viewPager);
