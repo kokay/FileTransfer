@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.kokayapp.filetransfer.SendFiles.ClientSelectionActivity.connections;
+import static com.kokayapp.filetransfer.SendFiles.FileSelectionActivity.fileList;
 
 public class SendingFilesFragment extends Fragment {
     private static final String SOCKET_POSITION = "socket position";
@@ -96,10 +97,8 @@ public class SendingFilesFragment extends Fragment {
             Writer out = null;
             try {
                 out = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
-                fileListLocal.add(new FileInfo("hello/hello.jpg", 100));
-                fileListLocal.add(new FileInfo("koji/koji.pdf", 300));
-                for (FileInfo fileInfo : fileListLocal) {
-                    //fileListLocal.add(new FileInfo(fileInfo));
+                for (FileInfo fileInfo : fileList) {
+                    fileListLocal.add(new FileInfo(fileInfo));
                     out.write(fileInfo.getUri() + " " + fileInfo.getTitle() + " " + fileInfo.getSize() + "\r\n");
                 }
                 out.flush();

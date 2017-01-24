@@ -91,4 +91,10 @@ public class FileInfo {
     public void addSoFar(int count) {
         soFar += count;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof String) return this.uri.equals(obj);
+        else return this.uri.equals(((FileInfo)obj).getUri());
+    }
 }

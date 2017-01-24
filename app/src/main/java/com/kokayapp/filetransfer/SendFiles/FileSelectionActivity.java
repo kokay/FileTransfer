@@ -24,11 +24,10 @@ import com.kokayapp.filetransfer.R;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public class FileSelectionActivity extends AppCompatActivity {
-    public static HashSet<FileInfo> selectedFiles = new HashSet<>();
+    public static List<FileInfo> fileList = new ArrayList<>();
     private List<Fragment> fileFragments = new ArrayList<>();
 
     @Override
