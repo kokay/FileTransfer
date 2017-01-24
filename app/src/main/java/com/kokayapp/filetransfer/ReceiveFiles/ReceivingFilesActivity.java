@@ -1,6 +1,7 @@
 package com.kokayapp.filetransfer.ReceiveFiles;
 
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -17,6 +18,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -110,12 +112,15 @@ public class ReceivingFilesActivity extends AppCompatActivity {
 
                 for (int i = 0; i < fileList.size(); ++i ) {
                     FileInfo fileInfo = fileList.get(i);
-                    if (!fileInfo.isChecked()) {
-                        out.write(Integer.toString(i));
+                    if (fileInfo.isChecked()) {
+                        String s = Integer.toString(i) + "\r\n";
+                        out.write(s);
                         out.flush();
                         receiveFile(fileInfo, in);
                     }
                 }
+                out.write("\r\n");
+                out.flush();
 
                 out.close();
                 in.close();
@@ -132,12 +137,17 @@ public class ReceivingFilesActivity extends AppCompatActivity {
         }
 
         private void receiveFile(FileInfo fileInfo, BufferedInputStream in) {
-            BufferedOutputStream fin = null;
+            FileOutputStream fin = null;
             try {
-                fin = new BufferedOutputStream(new FileOutputStream(fileInfo));
+                File file = new File(Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_DOCUMENTS) + "FileTransfer/", fileInfo.getPath());
+                if(!file.getParentFile().exists()) file.getParentFile().mkdirs();
+
+
+                fin = new FileOutputStream(file);
 
                 int count;
-                while((fileInfo.getSoFar() != fileInfo.length()) && (count = in.read(buf)) > 0) {
+                while((fileInfo.getSoFar() != fileInfo.getSize()) && (count = in.read(buf)) > 0) {
                     fin.write(buf, 0, count);
                     fileInfo.addSoFar(count);
                     publishProgress();

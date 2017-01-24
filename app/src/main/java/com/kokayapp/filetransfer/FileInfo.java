@@ -10,6 +10,7 @@ import java.util.StringTokenizer;
  */
 
 public class FileInfo extends File {
+    private final long size;
     private long soFar;
     private boolean checked;
 
@@ -17,45 +18,72 @@ public class FileInfo extends File {
     private final String type;
 
     private static final long BYTE = 1024;
-    private static final long MEGABYTE = BYTE << 10;
+    private static final long KILOBYTE = BYTE << 10;
+    private static final long MEGABYTE = KILOBYTE << 10;
     private static final long GIGABYTE = MEGABYTE << 10;
-
-    public FileInfo(FileInfo rhs) {
-        super(rhs.getPath());
-        this.soFar = rhs.soFar;
-        this.checked = true;
-        this.fileSizeDivisor = rhs.fileSizeDivisor;
-        this.type = rhs.type;
-    }
 
     public FileInfo(String path) {
         super(path);
+        this.size = super.length();
         this.soFar = 0;
         this.checked = true;
-        if(this.length() >= GIGABYTE) {
+        if(size >= GIGABYTE) {
             fileSizeDivisor = MEGABYTE;
             type = "GB";
-        } else if (this.length() >= MEGABYTE) {
-            fileSizeDivisor = BYTE;
+        } else if (size >= MEGABYTE) {
+            fileSizeDivisor = KILOBYTE;
             type = "MB";
+        } else if (size >= KILOBYTE){
+            fileSizeDivisor = BYTE;
+            type = "KB";
         } else {
             fileSizeDivisor = 1;
             type = "B";
         }
     }
 
+    public FileInfo(String path, long size) {
+        super(path);
+        this.size = size;
+        this.soFar = 0;
+        this.checked = true;
+        if(size >= GIGABYTE) {
+            fileSizeDivisor = MEGABYTE;
+            type = "GB";
+        } else if (size >= MEGABYTE) {
+            fileSizeDivisor = KILOBYTE;
+            type = "MB";
+        } else if (size >= KILOBYTE){
+            fileSizeDivisor = BYTE;
+            type = "KB";
+        } else {
+            fileSizeDivisor = 1;
+            type = "B";
+        }
+    }
+
+    public FileInfo(FileInfo rhs) {
+        super(rhs.getPath());
+        this.size = rhs.size;
+        this.soFar = rhs.soFar;
+        this.checked = true;
+        this.fileSizeDivisor = rhs.fileSizeDivisor;
+        this.type = rhs.type;
+    }
+
+
     public static FileInfo parse(String line) {
         StringTokenizer st = new StringTokenizer(line);
-        return new FileInfo(st.nextToken());
+        return new FileInfo(st.nextToken(), Integer.parseInt(st.nextToken()));
     }
 
     public String getStringProgress() {
         return (soFar / (float) fileSizeDivisor) + " " + type + " / "
-                + (this.length() / (float) fileSizeDivisor) + " " + type;
+                + (size / (float) fileSizeDivisor) + " " + type;
     }
 
     public int getIntProgress() {
-        return (int)((soFar / (float) this.length()) * 100);
+        return (int)((soFar / (float) size) * 100);
     }
 
     public boolean isChecked() {
@@ -66,6 +94,9 @@ public class FileInfo extends File {
         this.checked = checked;
     }
 
+    public long getSize() {
+        return size;
+    }
     public long getSoFar() {
         return soFar;
     }
