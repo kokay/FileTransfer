@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.kokayapp.filetransfer.ReceiveFiles.ServerSelectionActivity"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/this_device_tv"
+        android:layout_alignParentTop="true"
+        android:textSize="16sp"
+        android:layout_margin="4dp"
+        android:text="This Device" />
+
+    <View
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:background="@color/colorPrimary"
+        android:layout_height="1dp"
+        android:layout_alignBottom="@+id/this_device_tv"
+        android:id="@+id/line_under_this_device_tv" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:background="?android:attr/activatedBackgroundIndicator"
+        android:padding="3dp"
+        android:id="@+id/this_device"
+        android:layout_below="@+id/line_under_this_device_tv"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="2dp"
+            android:src="@mipmap/ic_launcher" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:text="SSID"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/ssid" />
+
+            <TextView
+                android:text="Password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/password" />
+
+            <TextView
+                android:id="@+id/my_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textSize="14sp"
+                android:textAllCaps="false" />
+
+            <TextView
+                android:id="@+id/my_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:layout_above="@+id/client_candidates_list"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:background="@color/colorPrimary"
+        android:layout_height="3dp"
+        android:id="@+id/line_under_this_device"
+        android:layout_below="@+id/this_device"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/line_under_this_device"
+        android:id="@+id/client_infomation"
+        android:padding="4dp">
+
+        <TextView
+            android:text="Device(s) To Send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/client_candidates_tv"
+            android:layout_below="@+id/line_under_this_device"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textSize="16sp" />
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/scanning_tv"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="4dp" />
+
+        <TextView
+            android:text="Waiting... "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/scanning_tv"
+            android:layout_alignParentRight="true" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:background="@color/colorPrimary"
+        android:layout_height="1dp"
+        android:id="@+id/line_under_client_candidates_tv"
+        android:layout_below="@+id/client_infomation" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/client_candidates_list"
+        android:layout_below="@+id/line_under_client_candidates_tv"
+        android:layout_above="@+id/send_files_button" />
+
+    <Button
+        android:text="Send File(s)"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/send_files_button"
+        android:elevation="0dp"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true" />
+
+</RelativeLayout>

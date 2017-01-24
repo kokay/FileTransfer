@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_choose_send_or_receive"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.kokayapp.filetransfer.SendReceiveSelectionActivity">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <Button
+            android:text="Send File(s)"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/send_button" />
+
+        <Button
+            android:text="Receive File(s)"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/receive_button" />
+    </LinearLayout>
+</RelativeLayout>
