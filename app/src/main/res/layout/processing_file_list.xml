@@ -12,13 +12,13 @@
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/sending_file_progress_bar" />
+            android:id="@+id/processing_file_progress_bar" />
 
         <TextView
             android:text="Sending the file list..."
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/sending_file_status"
+            android:id="@+id/processing_file_status"
             android:gravity="center" />
 
     </LinearLayout>
@@ -26,16 +26,16 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/sending_file_list"
+        android:id="@+id/processing_file_list"
         android:visibility="gone"
-        android:layout_above="@+id/start_sending_file_button"
+        android:layout_above="@+id/start_processing_file_button"
         android:layout_alignParentTop="true" />
 
     <Button
         android:text="Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/start_sending_file_button"
+        android:id="@+id/start_processing_file_button"
         android:visibility="gone"
         android:layout_alignParentBottom="true" />
 

@@ -14,8 +14,11 @@ import com.kokayapp.filetransfer.FileListAdapter;
 import com.kokayapp.filetransfer.R;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -36,23 +39,23 @@ public class ReceivingFilesActivity extends AppCompatActivity {
     private String ipAddress;
 
     private ListView fileListView;
-    private ProgressBar receivingFileProgressBar;
-    private TextView receivingFileStatus;
+    private ProgressBar processingFileProgressBar;
+    private TextView processingFileStatus;
     private Button startReceivingFileButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_receiving_files);
+        setContentView(R.layout.processing_file_list);
 
         fileListAdapter = new FileListAdapter(this, fileList);
-        fileListView = (ListView) findViewById(R.id.receiving_file_list);
+        fileListView = (ListView) findViewById(R.id.processing_file_list);
         fileListView.setAdapter(fileListAdapter);
 
-        receivingFileProgressBar = (ProgressBar) findViewById(R.id.receiving_file_progress_bar);
-        receivingFileStatus = (TextView) findViewById(R.id.receiving_file_status);
+        processingFileProgressBar = (ProgressBar) findViewById(R.id.processing_file_progress_bar);
+        processingFileStatus = (TextView) findViewById(R.id.processing_file_status);
 
-        startReceivingFileButton = (Button) findViewById(R.id.start_receiving_file_button);
+        startReceivingFileButton = (Button) findViewById(R.id.start_processing_file_button);
         startReceivingFileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,10 +76,11 @@ public class ReceivingFilesActivity extends AppCompatActivity {
 
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-                String line;
-                while(!(line = in.readLine()).isEmpty()) {
+                for(String line = in.readLine(); !line.isEmpty(); line = in.readLine()) {
+                    System.out.println("receive files task :" + line);
                     fileList.add(FileInfo.parse(line));
                 }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -85,8 +89,8 @@ public class ReceivingFilesActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            receivingFileProgressBar.setVisibility(View.GONE);
-            receivingFileStatus.setVisibility(View.GONE);
+            processingFileProgressBar.setVisibility(View.GONE);
+            processingFileStatus.setVisibility(View.GONE);
             fileListView.setVisibility(View.VISIBLE);
             startReceivingFileButton.setVisibility(View.VISIBLE);
             fileListAdapter.notifyDataSetChanged();
@@ -106,15 +110,10 @@ public class ReceivingFilesActivity extends AppCompatActivity {
 
                 for (int i = 0; i < fileList.size(); ++i ) {
                     FileInfo fileInfo = fileList.get(i);
-                    if (!fileInfo.isChecked()) continue;
-
-                    out.write(Integer.toString(i));
-                    out.flush();
-
-                    int count;
-                    while((fileInfo.getSoFar() != fileInfo.length()) && (count = in.read(buf)) > 0) {
-                        fileInfo.addSoFar(count);
-                        publishProgress();
+                    if (!fileInfo.isChecked()) {
+                        out.write(Integer.toString(i));
+                        out.flush();
+                        receiveFile(fileInfo, in);
                     }
                 }
 
@@ -130,6 +129,23 @@ public class ReceivingFilesActivity extends AppCompatActivity {
             }
 
             return null;
+        }
+
+        private void receiveFile(FileInfo fileInfo, BufferedInputStream in) {
+            BufferedOutputStream fin = null;
+            try {
+                fin = new BufferedOutputStream(new FileOutputStream(fileInfo));
+
+                int count;
+                while((fileInfo.getSoFar() != fileInfo.length()) && (count = in.read(buf)) > 0) {
+                    fin.write(buf, 0, count);
+                    fileInfo.addSoFar(count);
+                    publishProgress();
+                }
+                fin.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
