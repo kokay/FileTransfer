@@ -31,6 +31,7 @@ public class FileSelectionActivity extends AppCompatActivity {
     public static List<FileInfo> fileList = new ArrayList<>();
     private List<Fragment> fileFragments = new ArrayList<>();
 
+    private Button waitForDeviceConnectionButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,14 +45,28 @@ public class FileSelectionActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        Button button = (Button) findViewById(R.id.send_file_button);
-        button.setOnClickListener(new View.OnClickListener() {
+        waitForDeviceConnectionButton = (Button) findViewById(R.id.wait_connections_button);
+        waitForDeviceConnectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ClientSelectionActivity.class);
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fileList.clear();
+    }
+
+    public void showButton() {
+        waitForDeviceConnectionButton.setVisibility(View.VISIBLE);
+    }
+
+    public void hideButton() {
+        waitForDeviceConnectionButton.setVisibility(View.GONE);
     }
 
     public static class ThumbnailImageWorkerTask extends AsyncTask<Long, Void, Bitmap> {
@@ -96,9 +111,7 @@ public class FileSelectionActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            if (isCancelled()) {
-                bitmap = null;
-            }
+            if (isCancelled()) bitmap = null;
 
             if (imageViewWeakReference != null && bitmap != null) {
                 final ImageView imageView = imageViewWeakReference.get();
@@ -109,7 +122,6 @@ public class FileSelectionActivity extends AppCompatActivity {
             }
         }
     }
-
 
     public static boolean cancelPotentialWork(ImageView imageView, long id) {
         final ThumbnailImageWorkerTask loadThumbnailTask = getThumbnailImageWorkerTask(imageView);

@@ -12,7 +12,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/send_file_button">
+        android:layout_above="@+id/wait_connections_button">
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
@@ -31,10 +31,11 @@
     </LinearLayout>
 
     <Button
-        android:text="Button"
+        android:text="Wait for Device Connection(s)"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/send_file_button"
-        android:layout_alignParentBottom="true" />
+        android:id="@+id/wait_connections_button"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone" />
 
 </RelativeLayout>

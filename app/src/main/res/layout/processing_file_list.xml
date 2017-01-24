@@ -28,14 +28,13 @@
         android:layout_height="match_parent"
         android:id="@+id/processing_file_list"
         android:visibility="gone"
-        android:layout_above="@+id/start_processing_file_button"
+        android:layout_above="@+id/processing_file_button"
         android:layout_alignParentTop="true" />
 
     <Button
-        android:text="Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/start_processing_file_button"
+        android:id="@+id/processing_file_button"
         android:visibility="gone"
         android:layout_alignParentBottom="true" />
 

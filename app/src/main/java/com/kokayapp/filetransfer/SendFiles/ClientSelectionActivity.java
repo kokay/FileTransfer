@@ -5,7 +5,6 @@ import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,14 +12,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.kokayapp.filetransfer.FileInfo;
 import com.kokayapp.filetransfer.FindingDevicesActivity;
 import com.kokayapp.filetransfer.R;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -29,8 +24,8 @@ import java.util.List;
 public class ClientSelectionActivity extends FindingDevicesActivity {
 
     public static List<WifiP2pDevice> selectedDevices = new ArrayList<>();
-    public static ServerSocket server;
     public static List<Socket> connections = new ArrayList<>();
+    public ServerSocket server;
 
     private ClientListAdapter clientListAdapter;
 
@@ -78,6 +73,7 @@ public class ClientSelectionActivity extends FindingDevicesActivity {
     public void onResume() {
         super.onResume();
         manager.createGroup(channel, null);
+        selectedDevices.clear();
         acceptingConnectionTask = new AcceptingConnectionTask();
         acceptingConnectionTask.start();
         test("resume");
@@ -102,6 +98,7 @@ public class ClientSelectionActivity extends FindingDevicesActivity {
     @Override
     public void resetData() {
         selectedDevices.clear();
+        connections.clear();
         deviceList.clear();
         clientListAdapter.notifyDataSetChanged();
     }
@@ -132,7 +129,6 @@ public class ClientSelectionActivity extends FindingDevicesActivity {
                 server = new ServerSocket(55555);
                 while(running) {
                     Socket connection = server.accept();
-                    System.out.println("IP ADDRESS :" + connection.getInetAddress());
                     connections.add(connection);
                 }
             } catch (IOException e1) {

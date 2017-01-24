@@ -31,7 +31,7 @@ public class ServerSelectionActivity extends FindingDevicesActivity {
         serverCandidatesListAdapter = new ServerCandidatesListAdapter(this, deviceList);
         deviceListAdapter = serverCandidatesListAdapter;
 
-        receiveFilesButton = (Button) findViewById(R.id.receive_files_button);
+        receiveFilesButton = (Button) findViewById(R.id.connect_button);
         receiveFilesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,6 +50,10 @@ public class ServerSelectionActivity extends FindingDevicesActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedServer = deviceList.get(position);
                 serverCandidatesListAdapter.notifyDataSetChanged();
+                if (!selectedServer.deviceName.isEmpty())
+                    receiveFilesButton.setText("Connect to " + selectedServer.deviceName);
+                else
+                    receiveFilesButton.setText("Connect to " + selectedServer.deviceAddress);
                 receiveFilesButton.setVisibility(View.VISIBLE);
             }
         });

@@ -17,29 +17,23 @@ public class FileInfo extends File {
     private final long fileSizeDivisor;
     private final String type;
 
-    private static final long BYTE = 1024;
+    private static final long BYTE = 1;
     private static final long KILOBYTE = BYTE << 10;
     private static final long MEGABYTE = KILOBYTE << 10;
     private static final long GIGABYTE = MEGABYTE << 10;
+
+    private static final String BYTE_STRING = "B";
+    private static final String KILOBYTE_STRING = "KB";
+    private static final String MEGABYTE_STRING = "MB";
+    private static final String GIGABYTE_STRING = "GB";
 
     public FileInfo(String path) {
         super(path);
         this.size = super.length();
         this.soFar = 0;
         this.checked = true;
-        if(size >= GIGABYTE) {
-            fileSizeDivisor = MEGABYTE;
-            type = "GB";
-        } else if (size >= MEGABYTE) {
-            fileSizeDivisor = KILOBYTE;
-            type = "MB";
-        } else if (size >= KILOBYTE){
-            fileSizeDivisor = BYTE;
-            type = "KB";
-        } else {
-            fileSizeDivisor = 1;
-            type = "B";
-        }
+        this.fileSizeDivisor = getFileSizeDivisor(size);
+        this.type = getType(size);
     }
 
     public FileInfo(String path, long size) {
@@ -47,19 +41,22 @@ public class FileInfo extends File {
         this.size = size;
         this.soFar = 0;
         this.checked = true;
-        if(size >= GIGABYTE) {
-            fileSizeDivisor = MEGABYTE;
-            type = "GB";
-        } else if (size >= MEGABYTE) {
-            fileSizeDivisor = KILOBYTE;
-            type = "MB";
-        } else if (size >= KILOBYTE){
-            fileSizeDivisor = BYTE;
-            type = "KB";
-        } else {
-            fileSizeDivisor = 1;
-            type = "B";
-        }
+        this.fileSizeDivisor = getFileSizeDivisor(size);
+        this.type = getType(size);
+    }
+
+    private long getFileSizeDivisor(long size) {
+        if(size >= GIGABYTE) return GIGABYTE;
+        else if (size >= MEGABYTE) return MEGABYTE;
+        else if (size >= KILOBYTE) return KILOBYTE;
+        else return BYTE;
+    }
+
+    private String getType(long size) {
+        if(size >= GIGABYTE) return GIGABYTE_STRING;
+        else if (size >= MEGABYTE) return MEGABYTE_STRING;
+        else if (size >= KILOBYTE) return KILOBYTE_STRING;
+        else return BYTE_STRING;
     }
 
     public FileInfo(FileInfo rhs) {
@@ -72,9 +69,9 @@ public class FileInfo extends File {
     }
 
 
-    public static FileInfo parse(String line) {
-        StringTokenizer st = new StringTokenizer(line);
-        return new FileInfo(st.nextToken(), Integer.parseInt(st.nextToken()));
+    public static FileInfo parse(String parentPath, String fileInfoStr) {
+        StringTokenizer st = new StringTokenizer(fileInfoStr);
+        return new FileInfo(parentPath + st.nextToken(), Integer.parseInt(st.nextToken()));
     }
 
     public String getStringProgress() {

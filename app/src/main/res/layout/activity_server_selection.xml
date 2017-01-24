@@ -120,13 +120,12 @@
         android:layout_height="match_parent"
         android:id="@+id/server_candidates_list"
         android:layout_below="@+id/line_under_server_candidates_tv"
-        android:layout_above="@+id/receive_files_button" />
+        android:layout_above="@+id/connect_button" />
 
     <Button
-        android:text="Receive File(s)"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/receive_files_button"
+        android:id="@+id/connect_button"
         android:layout_weight="1"
         android:elevation="0dp"
         android:visibility="gone"

@@ -1,5 +1,6 @@
 package com.kokayapp.filetransfer.SendFiles;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -57,6 +58,8 @@ public class SendingFilesFragment extends Fragment {
         return fragment;
     }
 
+    private SendingFilesActivity sendingFilesActivity;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +80,7 @@ public class SendingFilesFragment extends Fragment {
         processingFileProgressBar = (ProgressBar) view.findViewById(R.id.processing_file_progress_bar);
         processingFileStatus = (TextView) view.findViewById(R.id.processing_file_status);
 
-        startReceivingFileButton = (Button) view.findViewById(R.id.start_processing_file_button);
+        startReceivingFileButton = (Button) view.findViewById(R.id.processing_file_button);
         startReceivingFileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,10 +104,15 @@ public class SendingFilesFragment extends Fragment {
                 out.flush();
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             return null;
         }
-
 
         @Override
         protected void onPostExecute(Void aVoid) {
@@ -135,14 +143,9 @@ public class SendingFilesFragment extends Fragment {
                 out = new BufferedOutputStream(connection.getOutputStream());
                 in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-                for(String line = in.readLine(); !line.isEmpty(); line = in.readLine()) {
-                    System.out.println("send files task :" + line);
+                for(String line = in.readLine(); !line.isEmpty(); line = in.readLine())
                     sendFile(fileListLocal.get(Integer.parseInt(line)), out);
-                }
 
-                System.out.println("send files task : done");
-                out.close();
-                in.close();
             }catch(IOException e){
                 e.printStackTrace();
             }finally{
@@ -150,6 +153,7 @@ public class SendingFilesFragment extends Fragment {
                     in.close();
                     out.close();
                 } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
             return null;
@@ -159,17 +163,20 @@ public class SendingFilesFragment extends Fragment {
             BufferedInputStream fin = null;
             try {
                 fin = new BufferedInputStream(new FileInputStream(fileInfo));
-                int count;
 
+                int count;
                 while((fileInfo.getSoFar() != fileInfo.length()) && (count = fin.read(buf)) > 0) {
                     out.write(buf, 0, count);
                     fileInfo.addSoFar(count);
                     publishProgress();
                 }
                 out.flush();
-                fin.close();
             } catch (IOException e) {
                 e.printStackTrace();
+            }finally{
+                try {
+                    fin.close();
+                } catch (IOException e) {}
             }
         }
 
@@ -185,6 +192,7 @@ public class SendingFilesFragment extends Fragment {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            ((SendingFilesActivity) getActivity()).reportDone();
         }
     }
 }

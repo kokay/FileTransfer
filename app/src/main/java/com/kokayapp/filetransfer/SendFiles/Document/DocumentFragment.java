@@ -16,6 +16,7 @@ import android.widget.ListView;
 
 import com.kokayapp.filetransfer.FileInfo;
 import com.kokayapp.filetransfer.R;
+import com.kokayapp.filetransfer.SendFiles.FileSelectionActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -77,14 +78,13 @@ public class DocumentFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 cursor.moveToPosition(position);
                 FileInfo file = new FileInfo(cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA)));
-                long size = cursor.getLong(cursor.getColumnIndex(MediaStore.Files.FileColumns.SIZE));
 
-                if (fileList.contains(file)) {
-                    fileList.remove(fileList.indexOf(file));
-                } else {
-                    fileList.add(file);
-                }
+                if (fileList.contains(file)) fileList.remove(fileList.indexOf(file));
+                else fileList.add(file);
                 documentListAdapter.notifyDataSetChanged();
+
+                if (fileList.size() == 0) ((FileSelectionActivity) getActivity()).hideButton();
+                else ((FileSelectionActivity) getActivity()).showButton();
             }
         });
         return view;
