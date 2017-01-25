@@ -23,6 +23,7 @@ import com.kokayapp.filetransfer.FileInfo;
 import com.kokayapp.filetransfer.R;
 import com.kokayapp.filetransfer.SendFiles.Audio.AudioFragment;
 import com.kokayapp.filetransfer.SendFiles.Document.DocumentFragment;
+import com.kokayapp.filetransfer.SendFiles.Photo.PhotoFragment;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class FileSelectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_selection);
 
+        fileFragments.add(PhotoFragment.newInstance());
         fileFragments.add(AudioFragment.newInstance());
         fileFragments.add(DocumentFragment.newInstance());
 
