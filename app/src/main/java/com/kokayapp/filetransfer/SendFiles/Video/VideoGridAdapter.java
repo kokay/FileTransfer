@@ -1,4 +1,4 @@
-package com.kokayapp.filetransfer.SendFiles.Photo;
+package com.kokayapp.filetransfer.SendFiles.Video;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -20,15 +20,15 @@ import static com.kokayapp.filetransfer.SendFiles.FileSelectionActivity.AsyncDra
  * Created by Koji on 12/27/2016.
  */
 
-public class PhotoGridAdapter extends CursorAdapter {
-    private final int IMAGE_ID;
-    private final int IMAGE_DATA;
+public class VideoGridAdapter extends CursorAdapter {
+    private final int VIDEO_ID;
+    private final int VIDEO_DATA;
 
-    public PhotoGridAdapter(Context context, Cursor c) {
+    public VideoGridAdapter(Context context, Cursor c) {
         super(context, c, 0);
 
-        IMAGE_ID = c.getColumnIndex(MediaStore.Images.Media._ID);
-        IMAGE_DATA = c.getColumnIndex(MediaStore.Images.Media.DATA);
+        VIDEO_ID = c.getColumnIndex(MediaStore.Video.Media._ID);
+        VIDEO_DATA = c.getColumnIndex(MediaStore.Video.Media.DATA);
     }
 
     @Override
@@ -41,13 +41,13 @@ public class PhotoGridAdapter extends CursorAdapter {
         TextView uri = (TextView) view.findViewById(R.id.title);
         ImageView thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
 
-        uri.setText(cursor.getString(IMAGE_DATA));
-        loadThumbnail(context, thumbnail, cursor.getLong(IMAGE_ID));
+        uri.setText(cursor.getString(VIDEO_DATA));
+        loadThumbnail(context, thumbnail, cursor.getLong(VIDEO_ID));
     }
 
     public void loadThumbnail(Context context, ImageView imageView, long id) {
         if (cancelPotentialWork(imageView, id)) {
-            final ThumbnailImageWorkerTask task = new ThumbnailImageWorkerTask(context, imageView, 0);
+            final ThumbnailImageWorkerTask task = new ThumbnailImageWorkerTask(context, imageView, 1);
             final AsyncDrawable asyncDrawable = new AsyncDrawable(context.getResources(), null, task);
             imageView.setImageDrawable(asyncDrawable);
             task.execute(id);

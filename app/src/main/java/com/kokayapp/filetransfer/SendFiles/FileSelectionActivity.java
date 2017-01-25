@@ -24,6 +24,7 @@ import com.kokayapp.filetransfer.R;
 import com.kokayapp.filetransfer.SendFiles.Audio.AudioFragment;
 import com.kokayapp.filetransfer.SendFiles.Document.DocumentFragment;
 import com.kokayapp.filetransfer.SendFiles.Photo.PhotoFragment;
+import com.kokayapp.filetransfer.SendFiles.Video.VideoFragment;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class FileSelectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_file_selection);
 
         fileFragments.add(PhotoFragment.newInstance());
+        fileFragments.add(VideoFragment.newInstance());
         fileFragments.add(AudioFragment.newInstance());
         fileFragments.add(DocumentFragment.newInstance());
 
@@ -94,10 +96,10 @@ public class FileSelectionActivity extends AppCompatActivity {
             switch (type) {
                 case 0 :
                     return MediaStore.Images.Thumbnails.getThumbnail(context.getContentResolver(),
-                                        id, MediaStore.Images.Thumbnails.MINI_KIND, null);
+                                        id, MediaStore.Images.Thumbnails.MICRO_KIND, null);
                 case 1 :
                     return MediaStore.Video.Thumbnails.getThumbnail(context.getContentResolver(),
-                                        id, MediaStore.Video.Thumbnails.MINI_KIND, null);
+                                        id, MediaStore.Video.Thumbnails.MICRO_KIND, null);
                 case 2 :
                     Cursor cursor = context.getContentResolver().query(
                             MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
