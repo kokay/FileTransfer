@@ -21,6 +21,7 @@ import android.widget.ImageView;
 
 import com.kokayapp.filetransfer.FileInfo;
 import com.kokayapp.filetransfer.R;
+import com.kokayapp.filetransfer.SendFiles.Audio.AudioFragment;
 import com.kokayapp.filetransfer.SendFiles.Document.DocumentFragment;
 
 import java.lang.ref.WeakReference;
@@ -37,6 +38,7 @@ public class FileSelectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_selection);
 
+        fileFragments.add(AudioFragment.newInstance());
         fileFragments.add(DocumentFragment.newInstance());
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
@@ -61,13 +63,15 @@ public class FileSelectionActivity extends AppCompatActivity {
         fileList.clear();
     }
 
-    public void showButton() {
-        waitForDeviceConnectionButton.setVisibility(View.VISIBLE);
+    public void selectFile(FileInfo fileInfo) {
+        if (fileList.contains(fileInfo)) fileList.remove(fileList.indexOf(fileInfo));
+        else fileList.add(fileInfo);
+
+        if (fileList.size() == 0) waitForDeviceConnectionButton.setVisibility(View.GONE);
+        else waitForDeviceConnectionButton.setVisibility(View.VISIBLE);
+
     }
 
-    public void hideButton() {
-        waitForDeviceConnectionButton.setVisibility(View.GONE);
-    }
 
     public static class ThumbnailImageWorkerTask extends AsyncTask<Long, Void, Bitmap> {
         private final WeakReference<ImageView> imageViewWeakReference;

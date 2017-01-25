@@ -37,10 +37,7 @@ public class DocumentListAdapter extends CursorAdapter {
         t.setText(cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.SIZE)));
         CheckBox checkBox = (CheckBox) view.findViewById(R.id.file_check_box);
         FileInfo fileInfo = new FileInfo(cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA)));
-        if (!fileList.contains(fileInfo)) {
-            checkBox.setChecked(false);
-        } else {
-            checkBox.setChecked(true);
-        }
+        if (!fileList.contains(fileInfo)) checkBox.setChecked(false);
+        else checkBox.setChecked(true);
     }
 }

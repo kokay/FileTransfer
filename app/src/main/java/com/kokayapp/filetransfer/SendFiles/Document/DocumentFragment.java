@@ -53,6 +53,8 @@ public class DocumentFragment extends Fragment {
     };
     private String sortOrder = null;
 
+    private int dataIndex;
+
     public static DocumentFragment newInstance() {
         DocumentFragment fragment = new DocumentFragment();
         return fragment;
@@ -63,6 +65,7 @@ public class DocumentFragment extends Fragment {
         super.onCreate(savedInstanceState);
         cursor = new CursorLoader(getContext(), uri, projection, selection,
                 selectionArgs, sortOrder).loadInBackground();
+        dataIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
         documentListAdapter = new DocumentListAdapter(getContext(), cursor);
     }
 
@@ -77,14 +80,9 @@ public class DocumentFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 cursor.moveToPosition(position);
-                FileInfo file = new FileInfo(cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA)));
-
-                if (fileList.contains(file)) fileList.remove(fileList.indexOf(file));
-                else fileList.add(file);
+                FileInfo fileInfo = new FileInfo(cursor.getString(dataIndex));
+                ((FileSelectionActivity)getActivity()).selectFile(fileInfo);
                 documentListAdapter.notifyDataSetChanged();
-
-                if (fileList.size() == 0) ((FileSelectionActivity) getActivity()).hideButton();
-                else ((FileSelectionActivity) getActivity()).showButton();
             }
         });
         return view;
