@@ -9,12 +9,20 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:srcCompat="@android:color/black"
         android:id="@+id/thumbnail"
         android:scaleType="centerCrop" />
 
+    <ImageView
+        app:srcCompat="@drawable/checkmark"
+        android:id="@+id/check_image"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:visibility="gone"
+        android:layout_width="30dp"
+        android:layout_height="30dp" />
+
     <TextView
-        android:text="URI"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/title"

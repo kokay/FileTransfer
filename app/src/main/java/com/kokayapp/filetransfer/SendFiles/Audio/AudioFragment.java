@@ -21,6 +21,7 @@ import com.kokayapp.filetransfer.SendFiles.FileSelectionActivity;
 public class AudioFragment extends Fragment {
     private Cursor cursor;
     private AudioListAdapter audioListAdapter;
+    private int dataIndex;
 
     private Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
     private String[] projection = {
@@ -34,7 +35,6 @@ public class AudioFragment extends Fragment {
     private String[] selectionArgs = null;
     private String sortOrder = null;
 
-    private int dataIndex;
     public static AudioFragment newInstance() {
         AudioFragment fragment = new AudioFragment();
         return fragment;

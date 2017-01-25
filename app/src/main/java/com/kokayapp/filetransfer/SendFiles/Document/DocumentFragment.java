@@ -31,6 +31,7 @@ import static com.kokayapp.filetransfer.SendFiles.FileSelectionActivity.fileList
 public class DocumentFragment extends Fragment {
     private Cursor cursor;
     private DocumentListAdapter documentListAdapter;
+    private int dataIndex;
 
     private Uri uri = MediaStore.Files.getContentUri("external");
     private String[] projection = {
@@ -53,7 +54,6 @@ public class DocumentFragment extends Fragment {
     };
     private String sortOrder = null;
 
-    private int dataIndex;
 
     public static DocumentFragment newInstance() {
         DocumentFragment fragment = new DocumentFragment();

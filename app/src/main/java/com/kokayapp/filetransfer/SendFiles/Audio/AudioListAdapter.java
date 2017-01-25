@@ -22,6 +22,7 @@ import static com.kokayapp.filetransfer.SendFiles.FileSelectionActivity.cancelPo
 import static com.kokayapp.filetransfer.SendFiles.FileSelectionActivity.ThumbnailImageWorkerTask;
 import static com.kokayapp.filetransfer.SendFiles.FileSelectionActivity.AsyncDrawable;
 import static com.kokayapp.filetransfer.SendFiles.FileSelectionActivity.fileList;
+import static com.kokayapp.filetransfer.SendFiles.FileSelectionActivity.getBitmapFromCache;
 
 /**
  * Created by Koji on 12/26/2016.
@@ -52,12 +53,18 @@ public class AudioListAdapter extends CursorAdapter{
     public void bindView(View view, Context context, Cursor c) {
         ((TextView) view.findViewById(R.id.audio_title)).setText(c.getString(AUDIO_TITLE));
         ((TextView) view.findViewById(R.id.audio_artist)).setText(c.getString(AUDIO_ARTIST));
-        if (!fileList.contains(new FileInfo(c.getString(AUDIO_DATA)))) {
-            ((CheckBox) view.findViewById(R.id.device_check_box)).setChecked(false);
-        } else {
+        if (fileList.contains(new FileInfo(c.getString(AUDIO_DATA)))) {
             ((CheckBox) view.findViewById(R.id.device_check_box)).setChecked(true);
+        } else {
+            ((CheckBox) view.findViewById(R.id.device_check_box)).setChecked(false);
         }
-        loadThumbnail(context, (ImageView) view.findViewById(R.id.file_image), c.getLong(AUDIO_ALBUM_ID));
+
+        ImageView imageView = (ImageView) view.findViewById(R.id.thumbnail);
+        long id = c. getLong(AUDIO_ALBUM_ID);
+        Bitmap bitmap = getBitmapFromCache(id);
+
+        if (bitmap != null) imageView.setImageBitmap(bitmap);
+        else loadThumbnail(context, imageView, id);
     }
 
     public void loadThumbnail(Context context, ImageView imageView, long id) {

@@ -65,10 +65,10 @@ public class DocumentListAdapter extends CursorAdapter {
         ((TextView) view.findViewById(R.id.document_title)).setText(c.getString(DOCUMENT_TITLE));
         ((TextView) view.findViewById(R.id.document_size)).setText(getSizeText(c.getInt(DOCUMENT_SIZE)));
         ((ImageView) view.findViewById(R.id.file_image)).setImageBitmap(getImage(c.getString(DOCUMENT_TYPE)));
-        if (!fileList.contains(new FileInfo(c.getString(DOCUMENT_DATA)))) {
-            ((CheckBox) view.findViewById(R.id.file_check_box)).setChecked(false);
-        } else {
+        if (fileList.contains(new FileInfo(c.getString(DOCUMENT_DATA)))) {
             ((CheckBox) view.findViewById(R.id.file_check_box)).setChecked(true);
+        } else {
+            ((CheckBox) view.findViewById(R.id.file_check_box)).setChecked(false);
         }
     }
 
