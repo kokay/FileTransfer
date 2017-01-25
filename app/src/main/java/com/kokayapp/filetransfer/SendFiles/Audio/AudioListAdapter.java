@@ -2,6 +2,9 @@ package com.kokayapp.filetransfer.SendFiles.Audio;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,8 +28,19 @@ import static com.kokayapp.filetransfer.SendFiles.FileSelectionActivity.fileList
  */
 
 public class AudioListAdapter extends CursorAdapter{
+    private final int AUDIO_TITLE;
+    private final int AUDIO_ARTIST;
+    private final int AUDIO_DATA;
+    private final int AUDIO_ALBUM_ID;
+    private final Bitmap audioImage;
+
     public AudioListAdapter(Context context, Cursor c) {
         super(context, c, 0);
+        AUDIO_TITLE = c.getColumnIndex(MediaStore.Audio.Media.TITLE);
+        AUDIO_ARTIST = c.getColumnIndex(MediaStore.Audio.Media.ARTIST);
+        AUDIO_DATA = c.getColumnIndex(MediaStore.Audio.Media.DATA);
+        AUDIO_ALBUM_ID = c.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
+        audioImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.audio);
     }
 
     @Override
@@ -35,23 +49,21 @@ public class AudioListAdapter extends CursorAdapter{
     }
 
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
-        TextView t = (TextView) view.findViewById(R.id.audio_title);
-        t.setText(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)));
-        t = (TextView) view.findViewById(R.id.audio_artist);
-        t.setText(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)));
-        ImageView imageView = (ImageView) view.findViewById(R.id.file_image);
-        CheckBox checkBox = (CheckBox) view.findViewById(R.id.device_check_box);
-        FileInfo fileInfo = new FileInfo(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)));
-        if (!fileList.contains(fileInfo)) checkBox.setChecked(false);
-        else checkBox.setChecked(true);
-        loadThumbnail(context, imageView, cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)));
+    public void bindView(View view, Context context, Cursor c) {
+        ((TextView) view.findViewById(R.id.audio_title)).setText(c.getString(AUDIO_TITLE));
+        ((TextView) view.findViewById(R.id.audio_artist)).setText(c.getString(AUDIO_ARTIST));
+        if (!fileList.contains(new FileInfo(c.getString(AUDIO_DATA)))) {
+            ((CheckBox) view.findViewById(R.id.device_check_box)).setChecked(false);
+        } else {
+            ((CheckBox) view.findViewById(R.id.device_check_box)).setChecked(true);
+        }
+        loadThumbnail(context, (ImageView) view.findViewById(R.id.file_image), c.getLong(AUDIO_ALBUM_ID));
     }
 
     public void loadThumbnail(Context context, ImageView imageView, long id) {
         if (cancelPotentialWork(imageView, id)) {
             final ThumbnailImageWorkerTask task = new FileSelectionActivity.ThumbnailImageWorkerTask(context, imageView, 2);
-            final AsyncDrawable asyncDrawable = new AsyncDrawable(context.getResources(), null, task);
+            final AsyncDrawable asyncDrawable = new AsyncDrawable(context.getResources(), audioImage, task);
             imageView.setImageDrawable(asyncDrawable);
             task.execute(id);
         }

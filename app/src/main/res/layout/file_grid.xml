@@ -8,8 +8,8 @@
         android:layout_height="match_parent"
         android:id="@+id/file_grid"
         android:numColumns="auto_fit"
-        android:columnWidth="100dp"
-        android:verticalSpacing="2dp"
-        android:horizontalSpacing="2dp"
+        android:columnWidth="70dp"
+        android:verticalSpacing="3dp"
+        android:horizontalSpacing="3dp"
         android:layout_gravity="center" />
 </FrameLayout>

@@ -50,6 +50,8 @@ public class VideoFragment extends Fragment {
         return view;
     }
 
+
+
     @Override
     public String toString() {
         return "Video";

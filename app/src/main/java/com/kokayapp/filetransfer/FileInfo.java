@@ -17,15 +17,15 @@ public class FileInfo extends File {
     private final long fileSizeDivisor;
     private final String type;
 
-    private static final long BYTE = 1;
-    private static final long KILOBYTE = BYTE << 10;
-    private static final long MEGABYTE = KILOBYTE << 10;
-    private static final long GIGABYTE = MEGABYTE << 10;
+    public static final long BYTE = 1;
+    public static final long KILOBYTE = BYTE << 10;
+    public static final long MEGABYTE = KILOBYTE << 10;
+    public static final long GIGABYTE = MEGABYTE << 10;
 
-    private static final String BYTE_STRING = "B";
-    private static final String KILOBYTE_STRING = "KB";
-    private static final String MEGABYTE_STRING = "MB";
-    private static final String GIGABYTE_STRING = "GB";
+    public static final String BYTE_STRING = "B";
+    public static final String KILOBYTE_STRING = "KB";
+    public static final String MEGABYTE_STRING = "MB";
+    public static final String GIGABYTE_STRING = "GB";
 
     public FileInfo(String path) {
         super(path);
