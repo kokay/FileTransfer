@@ -29,6 +29,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Context.DISPLAY_SERVICE;
 import static com.kokayapp.filetransfer.SendFiles.ClientSelectionActivity.connections;
 import static com.kokayapp.filetransfer.SendFiles.FileSelectionActivity.fileList;
 
@@ -65,7 +66,7 @@ public class SendingFilesFragment extends Fragment {
         super.onCreate(savedInstanceState);
         connection = connections.get(getArguments().getInt(SOCKET_POSITION));
         sendFileListTask = new SendFileListTask();
-        sendFileListTask.execute();
+        sendFileListTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
@@ -104,12 +105,6 @@ public class SendingFilesFragment extends Fragment {
                 out.flush();
             } catch (IOException e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
             return null;
         }
@@ -123,7 +118,7 @@ public class SendingFilesFragment extends Fragment {
             fileListAdapter.notifyDataSetChanged();
 
             sendFilesTask = new SendFilesTask();
-            sendFilesTask.execute();
+            sendFilesTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
     private class SendFilesTask extends AsyncTask<Void, Void, Void> {

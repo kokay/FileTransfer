@@ -30,6 +30,6 @@ public class FragmentListPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return "Koji Okayasu";
+        return null;
     }
 }

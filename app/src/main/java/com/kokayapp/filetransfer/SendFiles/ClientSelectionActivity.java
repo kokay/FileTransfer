@@ -73,6 +73,7 @@ public class ClientSelectionActivity extends FindingDevicesActivity {
     public void onResume() {
         super.onResume();
         manager.createGroup(channel, null);
+        running = true;
         selectedDevices.clear();
         acceptingConnectionTask = new AcceptingConnectionTask();
         acceptingConnectionTask.start();
@@ -98,7 +99,6 @@ public class ClientSelectionActivity extends FindingDevicesActivity {
     @Override
     public void resetData() {
         selectedDevices.clear();
-        connections.clear();
         deviceList.clear();
         clientListAdapter.notifyDataSetChanged();
     }

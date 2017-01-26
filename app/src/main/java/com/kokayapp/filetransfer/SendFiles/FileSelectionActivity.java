@@ -12,13 +12,15 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.LruCache;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import com.kokayapp.filetransfer.FileInfo;
@@ -35,12 +37,36 @@ import java.util.List;
 import static com.kokayapp.filetransfer.FileInfo.KILOBYTE;
 
 public class FileSelectionActivity extends AppCompatActivity {
+    public static final int PHOTO_FRAGMENT = 0;
+    public static final int VIDEO_FRAGMENT = 1;
+    public static final int AUDIO_FRAGMENT = 2;
+    public static final int DOCUMENT_FRAGMENT = 3;
+    private final int[] selectedTabImages = {
+            R.drawable.photo_selected,
+            R.drawable.video_selected,
+            R.drawable.audio_selected,
+            R.drawable.document_selected,
+    };
+    private final int[] unselectedTabImages = {
+            R.drawable.photo_unselected,
+            R.drawable.video_unselected,
+            R.drawable.audio_unselected,
+            R.drawable.document_unselected,
+    };
+    private final String[] titles = {
+            "Photo",
+            "Video",
+            "Audio",
+            "Document"
+    };
+
     private static LruCache<Long, Bitmap> memoryCache;
     public static List<FileInfo> fileList = new ArrayList<>();
 
     private List<Fragment> fileFragments = new ArrayList<>();
 
-    private Button waitForDeviceConnectionButton;
+    private FloatingActionButton waitForDeviceConnectionButton;
+    private Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,10 +80,38 @@ public class FileSelectionActivity extends AppCompatActivity {
         ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
         viewPager.setAdapter(new FragmentListPagerAdapter(getSupportFragmentManager(), fileFragments));
 
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(titles[PHOTO_FRAGMENT]);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+        tabLayout.getTabAt(PHOTO_FRAGMENT).setIcon(selectedTabImages[PHOTO_FRAGMENT]);
+        tabLayout.getTabAt(VIDEO_FRAGMENT).setIcon(unselectedTabImages[VIDEO_FRAGMENT]);
+        tabLayout.getTabAt(AUDIO_FRAGMENT).setIcon(unselectedTabImages[AUDIO_FRAGMENT]);
+        tabLayout.getTabAt(DOCUMENT_FRAGMENT).setIcon(unselectedTabImages[DOCUMENT_FRAGMENT]);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                tab.setIcon(selectedTabImages[tab.getPosition()]);
+                toolbar.setTitle(titles[tab.getPosition()]);
+            }
 
-        waitForDeviceConnectionButton = (Button) findViewById(R.id.wait_connections_button);
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                tab.setIcon(unselectedTabImages[tab.getPosition()]);
+                toolbar.setTitle(titles[tab.getPosition()]);
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        waitForDeviceConnectionButton = (FloatingActionButton) findViewById(R.id.wait_connections_button);
         waitForDeviceConnectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,6 +128,14 @@ public class FileSelectionActivity extends AppCompatActivity {
                 return bitmap.getByteCount() / (int) KILOBYTE;
             }
         };
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
