@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.kokayapp.filetransfer.ReceiveFiles.ServerSelectionActivity"
-    android:orientation="vertical">
+    tools:context="com.kokayapp.filetransfer.ReceiveFiles.FileReceivingActivity"
+    android:orientation="vertical"
+    android:background="@color/colorPrimary">
 
     <TextView
         android:layout_width="match_parent"
@@ -45,6 +47,15 @@
             android:layout_height="match_parent">
 
             <TextView
+                android:id="@+id/my_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textSize="14sp"
+                android:textAllCaps="false" />
+
+            <TextView
                 android:text="SSID"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -55,24 +66,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/password" />
-
-            <TextView
-                android:id="@+id/my_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                android:textSize="14sp"
-                android:textAllCaps="false" />
-
-            <TextView
-                android:id="@+id/my_status"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="marquee"
-                android:layout_above="@+id/client_candidates_list"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
 
         </LinearLayout>
     </LinearLayout>
@@ -129,20 +122,33 @@
         android:id="@+id/line_under_client_candidates_tv"
         android:layout_below="@+id/client_infomation" />
 
-    <ListView
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/client_candidates_list"
-        android:layout_below="@+id/line_under_client_candidates_tv"
-        android:layout_above="@+id/send_files_button" />
+        android:layout_below="@+id/line_under_client_candidates_tv">
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:tabSelectedTextColor="@android:color/background_light" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/device_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:layout_alignParentTop="true" />
+
+    </LinearLayout>
 
     <Button
-        android:text="Send File(s)"
+        android:text="Done"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/send_files_button"
-        android:elevation="0dp"
-        android:visibility="gone"
-        android:layout_alignParentBottom="true" />
-
+        android:id="@+id/done_button"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone" />
 </RelativeLayout>

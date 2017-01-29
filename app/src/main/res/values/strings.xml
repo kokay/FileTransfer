@@ -1,6 +1,13 @@
 <resources>
     <string name="app_name">File Transfer</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="dialog_device_connect_title">Do you connect to this device?</string>
+    <string name="connect">Connect</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="select_device">Select a device</string>
+    <string name="finding_the_device">Finding the devices...</string>
+    <string name="connecting">Connecting...</string>
+    <string name="connection_fail">Connection failed</string>
+    <string name="greeting">Hello, this is File Transfer App :) </string>
 </resources>

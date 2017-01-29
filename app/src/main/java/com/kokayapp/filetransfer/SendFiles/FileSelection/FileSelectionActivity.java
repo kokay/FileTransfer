@@ -1,4 +1,4 @@
-package com.kokayapp.filetransfer.SendFiles;
+package com.kokayapp.filetransfer.SendFiles.FileSelection;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -15,6 +15,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -25,14 +26,10 @@ import android.widget.ImageView;
 
 import com.kokayapp.filetransfer.FileInfo;
 import com.kokayapp.filetransfer.R;
-import com.kokayapp.filetransfer.SendFiles.Audio.AudioFragment;
-import com.kokayapp.filetransfer.SendFiles.Document.DocumentFragment;
-import com.kokayapp.filetransfer.SendFiles.Photo.PhotoFragment;
-import com.kokayapp.filetransfer.SendFiles.Video.VideoFragment;
+import com.kokayapp.filetransfer.SendFiles.FileSending.FileSendingActivity;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.TreeSet;
 
 import static com.kokayapp.filetransfer.FileInfo.KILOBYTE;
 
@@ -41,6 +38,17 @@ public class FileSelectionActivity extends AppCompatActivity {
     public static final int VIDEO_FRAGMENT = 1;
     public static final int AUDIO_FRAGMENT = 2;
     public static final int DOCUMENT_FRAGMENT = 3;
+    public static final String SELECTED_FILES = "Selected Files";
+    public static final String ASK_TO_SELECT_FILES = "Select File(s) to Send";
+    public static final String FILES_SELECTED = " File(s) Selected";
+
+    private Fragment[] fileFragments = {
+            PhotoFragment.newInstance(),
+            VideoFragment.newInstance(),
+            AudioFragment.newInstance(),
+            DocumentFragment.newInstance()
+    };
+
     private final int[] selectedTabImages = {
             R.drawable.photo_selected,
             R.drawable.video_selected,
@@ -53,36 +61,35 @@ public class FileSelectionActivity extends AppCompatActivity {
             R.drawable.audio_unselected,
             R.drawable.document_unselected,
     };
-    private final String[] titles = {
-            "Photo",
-            "Video",
-            "Audio",
-            "Document"
-    };
 
     private static LruCache<Long, Bitmap> memoryCache;
-    public static List<FileInfo> fileList = new ArrayList<>();
+    private TreeSet<FileInfo> selectedFiles = new TreeSet<>();
 
-    private List<Fragment> fileFragments = new ArrayList<>();
-
-    private FloatingActionButton waitForDeviceConnectionButton;
+    private FloatingActionButton nextButton;
     private Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_selection);
 
-        fileFragments.add(PhotoFragment.newInstance());
-        fileFragments.add(VideoFragment.newInstance());
-        fileFragments.add(AudioFragment.newInstance());
-        fileFragments.add(DocumentFragment.newInstance());
-
         ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-        viewPager.setAdapter(new FragmentListPagerAdapter(getSupportFragmentManager(), fileFragments));
+        viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+                return fileFragments[position];
+            }
+
+            @Override
+            public int getCount() {
+                return fileFragments.length;
+            }
+        });
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(titles[PHOTO_FRAGMENT]);
+        toolbar.setTitle(ASK_TO_SELECT_FILES);
         setSupportActionBar(toolbar);
+        //getSupportActionBar().setHomeAsUpIndicator(R.drawable.back);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -96,13 +103,11 @@ public class FileSelectionActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 tab.setIcon(selectedTabImages[tab.getPosition()]);
-                toolbar.setTitle(titles[tab.getPosition()]);
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 tab.setIcon(unselectedTabImages[tab.getPosition()]);
-                toolbar.setTitle(titles[tab.getPosition()]);
             }
 
             @Override
@@ -111,11 +116,12 @@ public class FileSelectionActivity extends AppCompatActivity {
             }
         });
 
-        waitForDeviceConnectionButton = (FloatingActionButton) findViewById(R.id.wait_connections_button);
-        waitForDeviceConnectionButton.setOnClickListener(new View.OnClickListener() {
+        nextButton = (FloatingActionButton) findViewById(R.id.wait_connections_button);
+        nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ClientSelectionActivity.class);
+                Intent intent = new Intent(getApplicationContext(), FileSendingActivity.class);
+                intent.putExtra(SELECTED_FILES, selectedFiles);
                 startActivity(intent);
             }
         });
@@ -141,16 +147,25 @@ public class FileSelectionActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        fileList.clear();
     }
 
     public void selectFile(FileInfo fileInfo) {
-        if (fileList.contains(fileInfo)) fileList.remove(fileList.indexOf(fileInfo));
-        else fileList.add(fileInfo);
+        if (selectedFiles.contains(fileInfo)) selectedFiles.remove(fileInfo);
+        else selectedFiles.add(fileInfo);
 
-        if (fileList.size() == 0) waitForDeviceConnectionButton.setVisibility(View.GONE);
-        else waitForDeviceConnectionButton.setVisibility(View.VISIBLE);
+        if (selectedFiles.size() == 0) {
+            nextButton.setVisibility(View.GONE);
+            toolbar.setTitle(ASK_TO_SELECT_FILES);
+        } else {
+            nextButton.setVisibility(View.VISIBLE);
+            toolbar.setTitle(selectedFiles.size() + FILES_SELECTED);
+        }
     }
+
+    public boolean contains(FileInfo fileInfo) {
+        return selectedFiles.contains(fileInfo);
+    }
+
 
     public static class AsyncDrawable extends BitmapDrawable {
         private final WeakReference<ThumbnailImageWorkerTask> loadThumbnailTaskReference;
@@ -170,15 +185,12 @@ public class FileSelectionActivity extends AppCompatActivity {
         private final WeakReference<ImageView> imageViewWeakReference;
         private long id = -1;
         private int type = -1;
-        private Context context;
         private ContentResolver contentResolver;
 
         public ThumbnailImageWorkerTask(Context context, ImageView imageView, int type) {
             imageViewWeakReference = new WeakReference<ImageView>(imageView);
-            this.context = context;
             this.contentResolver = context.getContentResolver();
             this.type = type;
-
         }
 
         @Override
@@ -186,13 +198,13 @@ public class FileSelectionActivity extends AppCompatActivity {
             id = params[0];
 
             switch (type) {
-                case 0:
+                case PHOTO_FRAGMENT:
                     return MediaStore.Images.Thumbnails.getThumbnail(contentResolver,
                             id, MediaStore.Images.Thumbnails.MICRO_KIND, null);
-                case 1:
+                case VIDEO_FRAGMENT:
                     return MediaStore.Video.Thumbnails.getThumbnail(contentResolver,
                             id, MediaStore.Video.Thumbnails.MICRO_KIND, null);
-                case 2:
+                case AUDIO_FRAGMENT:
                     Cursor cursor = contentResolver.query(
                             MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
                             new String[]{MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART},
@@ -237,7 +249,6 @@ public class FileSelectionActivity extends AppCompatActivity {
         }
         return true;
     }
-
 
     public static ThumbnailImageWorkerTask getThumbnailImageWorkerTask(ImageView imageView) {
         if (imageView != null) {

@@ -1,5 +1,6 @@
 package com.kokayapp.filetransfer;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 import java.io.File;
@@ -10,13 +11,6 @@ import java.util.StringTokenizer;
  */
 
 public class FileInfo extends File {
-    private final long size;
-    private long soFar;
-    private boolean checked;
-
-    private final long fileSizeDivisor;
-    private final String type;
-
     public static final long BYTE = 1;
     public static final long KILOBYTE = BYTE << 10;
     public static final long MEGABYTE = KILOBYTE << 10;
@@ -27,6 +21,14 @@ public class FileInfo extends File {
     public static final String MEGABYTE_STRING = "MB";
     public static final String GIGABYTE_STRING = "GB";
 
+    private final long size;
+    private long soFar;
+    private boolean checked;
+    private Bitmap thumbnail;
+
+    private final long fileSizeDivisor;
+    private final String type;
+
     public FileInfo(String path) {
         super(path);
         this.size = super.length();
@@ -34,6 +36,7 @@ public class FileInfo extends File {
         this.checked = true;
         this.fileSizeDivisor = getFileSizeDivisor(size);
         this.type = getType(size);
+        this.thumbnail = null;
     }
 
     public FileInfo(String path, long size) {
@@ -43,6 +46,7 @@ public class FileInfo extends File {
         this.checked = true;
         this.fileSizeDivisor = getFileSizeDivisor(size);
         this.type = getType(size);
+        this.thumbnail = null;
     }
 
     private long getFileSizeDivisor(long size) {
@@ -68,15 +72,14 @@ public class FileInfo extends File {
         this.type = rhs.type;
     }
 
-
     public static FileInfo parse(String parentPath, String fileInfoStr) {
         StringTokenizer st = new StringTokenizer(fileInfoStr);
         return new FileInfo(parentPath + st.nextToken(), Integer.parseInt(st.nextToken()));
     }
 
     public String getStringProgress() {
-        return (soFar / (float) fileSizeDivisor) + " " + type + " / "
-                + (size / (float) fileSizeDivisor) + " " + type;
+        return String.format("%.2f " + type + " / " + "%.2f " + type,
+                (soFar / (float) fileSizeDivisor), (size / (float) fileSizeDivisor));
     }
 
     public int getIntProgress() {
@@ -94,6 +97,7 @@ public class FileInfo extends File {
     public long getSize() {
         return size;
     }
+
     public long getSoFar() {
         return soFar;
     }

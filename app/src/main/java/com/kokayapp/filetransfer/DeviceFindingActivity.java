@@ -1,6 +1,7 @@
 package com.kokayapp.filetransfer;
 
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
@@ -12,25 +13,30 @@ import android.net.wifi.p2p.WifiP2pManager.GroupInfoListener;
 import android.net.wifi.p2p.WifiP2pManager.ConnectionInfoListener;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class FindingDevicesActivity extends AppCompatActivity
+
+public abstract class DeviceFindingActivity extends AppCompatActivity
         implements PeerListListener, GroupInfoListener, ConnectionInfoListener {
 
-    protected WifiP2pDevice thisDevice;
     protected List<WifiP2pDevice> deviceList = new ArrayList<>();
-    protected ArrayAdapter deviceListAdapter;
+    protected DeviceListAdapter deviceListAdapter;
 
     protected final IntentFilter intentFilter = new IntentFilter();
     protected WifiP2pManager manager;
     protected Channel channel;
     protected BroadcastReceiver receiver;
     protected boolean isWiFiP2pEnabled = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +49,9 @@ public abstract class FindingDevicesActivity extends AppCompatActivity
 
         manager = (WifiP2pManager) getSystemService(this.WIFI_P2P_SERVICE);
         channel = manager.initialize(this, getMainLooper(), null);
+
+        deviceListAdapter = new DeviceListAdapter(this, deviceList);
+
     }
 
     @Override
@@ -62,15 +71,12 @@ public abstract class FindingDevicesActivity extends AppCompatActivity
         this.isWiFiP2pEnabled = isWiFiP2pEnabled;
     }
 
-    public abstract void resetData();
-
-    public void updateThisDevice(WifiP2pDevice device) {
-        thisDevice = device;
-        TextView view = (TextView) findViewById(R.id.my_name);
-        view.setText(device.deviceName + " " + device.deviceAddress);
-        view = (TextView) findViewById(R.id.my_status);
-        view.setText(getDeviceStatus(device.status));
+    public void resetData() {
+        deviceList.clear();
+        deviceListAdapter.notifyDataSetChanged();
     }
+
+    public abstract void updateThisDevice(WifiP2pDevice device);
 
     public static String getDeviceStatus(int deviceStatus) {
         switch (deviceStatus) {
@@ -83,7 +89,23 @@ public abstract class FindingDevicesActivity extends AppCompatActivity
         }
     }
 
-    public void test(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    public class DeviceListAdapter extends ArrayAdapter<WifiP2pDevice> {
+
+        public DeviceListAdapter(Context context, List<WifiP2pDevice> deviceList) {
+            super(context, 0, deviceList);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null)
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.device, null);
+
+            WifiP2pDevice device = deviceList.get(position);
+            if (device != null) {
+                TextView deviceName = (TextView) convertView.findViewById(R.id.device_name);
+                if (deviceName != null)   deviceName.setText(device.deviceName);
+            }
+            return convertView;
+        }
     }
 }

@@ -1,9 +1,9 @@
-package com.kokayapp.filetransfer.SendFiles;
+package com.kokayapp.filetransfer.SendFiles.FileSending;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,98 +29,124 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.content.Context.DISPLAY_SERVICE;
-import static com.kokayapp.filetransfer.SendFiles.ClientSelectionActivity.connections;
-import static com.kokayapp.filetransfer.SendFiles.FileSelectionActivity.fileList;
 
-public class SendingFilesFragment extends Fragment {
-    private static final String SOCKET_POSITION = "socket position";
+public class FileSendingFragment extends Fragment {
+    private static final String NICK_NAME = "NICK_NAME";
 
     private Socket connection;
+    private String nickName;
     private List<FileInfo> fileListLocal = new ArrayList<>();
     private FileListAdapter fileListAdapter;
-
-    private SendFileListTask sendFileListTask;
     private SendFilesTask sendFilesTask;
 
     private ListView fileListView;
     private ProgressBar processingFileProgressBar;
     private TextView processingFileStatus;
-    private Button startReceivingFileButton;
+    private Button button;
 
+    private View.OnClickListener sendOnClickListener;
+    private View.OnClickListener cancelOnClickListener;
+    private View.OnClickListener doneOnClickListener;
 
-    public SendingFilesFragment() {}
+    public FileSendingFragment() {}
 
-    public static SendingFilesFragment newInstance(int position) {
-        SendingFilesFragment fragment = new SendingFilesFragment();
+    public static FileSendingFragment newInstance(String nickName) {
+        FileSendingFragment fragment = new FileSendingFragment();
         Bundle args = new Bundle();
-        args.putInt(SOCKET_POSITION, position);
+        args.putString(NICK_NAME, nickName);
         fragment.setArguments(args);
         return fragment;
     }
 
-    private SendingFilesActivity sendingFilesActivity;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        connection = connections.get(getArguments().getInt(SOCKET_POSITION));
-        sendFileListTask = new SendFileListTask();
-        sendFileListTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        nickName = getArguments().getString(NICK_NAME);
+        connection = ((FileSendingActivity) getActivity()).getConnection(nickName);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.processing_file_list, container, false);
+        View view = inflater.inflate(R.layout.file_processing_page, container, false);
         fileListAdapter = new FileListAdapter(getContext(), fileListLocal);
 
         fileListView = (ListView) view.findViewById(R.id.processing_file_list);
         fileListView.setAdapter(fileListAdapter);
 
-        processingFileProgressBar = (ProgressBar) view.findViewById(R.id.processing_file_progress_bar);
-        processingFileStatus = (TextView) view.findViewById(R.id.processing_file_status);
-
-        startReceivingFileButton = (Button) view.findViewById(R.id.processing_file_button);
-        startReceivingFileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
+        sendFilesTask = new SendFilesTask();
+        new SendFileListTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         return view;
     }
 
-    private class SendFileListTask extends AsyncTask<Void, Void, Void> {
+    private void setUpOnClickListeners() {
+        sendOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                button.setOnClickListener(cancelOnClickListener);
+                sendFilesTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+        };
+
+        cancelOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendFilesTask.cancel(true);
+            }
+        };
+
+        doneOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteThisFragment();
+            }
+        };
+    }
+
+    private void deleteThisFragment() {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.remove(this).commit();
+        ((FileSendingActivity)getActivity()).removeConnection(nickName);
+    }
+    public String getNickName() {
+        return nickName;
+    }
+
+    private class SendFileListTask extends AsyncTask<Void, Void, Boolean> {
         @Override
-        protected Void doInBackground(Void... params) {
-            System.out.println("send file list task started!");
+        protected Boolean doInBackground(Void... params) {
             Writer out = null;
             try {
                 out = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
-                for (FileInfo fileInfo : fileList) {
+                System.out.println("check file list size " + ((FileSendingActivity)getActivity()).getSelectedFiles().size());
+                for (FileInfo fileInfo : ((FileSendingActivity)getActivity()).getSelectedFiles()) {
                     fileListLocal.add(new FileInfo(fileInfo));
                     out.write(fileInfo.getName() + " " + fileInfo.length() + "\r\n");
+                    System.out.println("check " + fileInfo.getName() + " " + fileInfo.length());
                 }
                 out.write("\r\n");
                 out.flush();
             } catch (IOException e) {
                 e.printStackTrace();
+                return false;
             }
-            return null;
+            return true;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
+        protected void onPostExecute(Boolean success) {
             processingFileProgressBar.setVisibility(View.GONE);
-            processingFileStatus.setVisibility(View.GONE);
-            fileListView.setVisibility(View.VISIBLE);
-            startReceivingFileButton.setVisibility(View.VISIBLE);
-            fileListAdapter.notifyDataSetChanged();
-
-            sendFilesTask = new SendFilesTask();
-            sendFilesTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            if (success) {
+                processingFileStatus.setVisibility(View.GONE);
+                fileListView.setVisibility(View.VISIBLE);
+                button.setVisibility(View.VISIBLE);
+                fileListAdapter.notifyDataSetChanged();
+            } else {
+                processingFileStatus.setVisibility(View.GONE);
+            }
         }
     }
+
     private class SendFilesTask extends AsyncTask<Void, Void, Void> {
         private byte[] buf = new byte[1024 * 3];
 
@@ -138,7 +164,7 @@ public class SendingFilesFragment extends Fragment {
                 out = new BufferedOutputStream(connection.getOutputStream());
                 in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-                for(String line = in.readLine(); !line.isEmpty(); line = in.readLine())
+                for(String line = in.readLine(); line != null && !line.isEmpty(); line = in.readLine())
                     sendFile(fileListLocal.get(Integer.parseInt(line)), out);
 
             }catch(IOException e){
@@ -182,12 +208,12 @@ public class SendingFilesFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            button.setOnClickListener(doneOnClickListener);
             try {
                 connection.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            ((SendingFilesActivity) getActivity()).reportDone();
         }
     }
 }

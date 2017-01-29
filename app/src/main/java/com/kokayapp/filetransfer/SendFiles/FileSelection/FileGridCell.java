@@ -1,4 +1,4 @@
-package com.kokayapp.filetransfer.SendFiles;
+package com.kokayapp.filetransfer.SendFiles.FileSelection;
 
 import android.content.Context;
 import android.util.AttributeSet;

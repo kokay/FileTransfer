@@ -9,13 +9,12 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 
 public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
-
     private WifiP2pManager manager;
     private Channel channel;
-    private FindingDevicesActivity activity;
+    private DeviceFindingActivity activity;
 
     public WiFiDirectBroadcastReceiver(WifiP2pManager manager, Channel channel,
-                                       FindingDevicesActivity activity) {
+                                       DeviceFindingActivity activity) {
         super();
         this.manager = manager;
         this.channel = channel;

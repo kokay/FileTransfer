@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.kokayapp.filetransfer.ReceiveFiles.ServerSelectionActivity"
+    tools:context="com.kokayapp.filetransfer.ReceiveFiles.FileReceivingActivity"
     android:orientation="vertical">
 
     <TextView
@@ -45,20 +45,11 @@
             <TextView
                 android:id="@+id/my_name"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:textAppearance="@style/TextAppearance.AppCompat.Button"
                 android:textSize="14sp"
                 android:textAllCaps="false" />
-
-            <TextView
-                android:id="@+id/my_status"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="marquee"
-                android:layout_above="@+id/server_candidates_list"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
 
         </LinearLayout>
     </LinearLayout>

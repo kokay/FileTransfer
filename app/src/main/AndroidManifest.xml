@@ -22,13 +22,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ReceiveFiles.ServerSelectionActivity" />
-        <activity android:name=".ReceiveFiles.ReceivingFilesActivity" />
-
-        <activity android:name=".SendFiles.ClientSelectionActivity" />
-        <activity android:name=".SendFiles.SendingFilesActivity" />
-        <activity android:name=".SendFiles.FileSelectionActivity" />
-
+        <activity android:name=".ReceiveFiles.FileReceivingActivity" />
+        <activity android:name=".SendFiles.FileSending.FileSendingActivity" />
+        <activity android:name=".SendFiles.FileSelection.FileSelectionActivity" />
     </application>
 
 </manifest>

@@ -1,80 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_choose_send_or_receive"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="false"
     tools:context="com.kokayapp.filetransfer.SendReceiveSelectionActivity">
 
     <LinearLayout
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center">
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/photo"
-                android:id="@+id/imageView3"
-                android:layout_weight="1" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/video"
-                android:id="@+id/imageView4"
-                android:layout_weight="1" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/audio"
-                android:id="@+id/imageView"
-                android:layout_weight="1" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/txt"
-                android:id="@+id/imageView5"
-                android:layout_weight="1" />
-
-        </LinearLayout>
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        android:layout_alignParentBottom="true">
 
         <Button
-            android:text="Send File(s)"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:id="@+id/send_button"
+            android:text="Send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_margin="30dp"
-            android:theme="@style/Animation.Design.BottomSheetDialog"
-            android:elevation="0dp"
-            android:textAllCaps="false" />
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:textAllCaps="false"
+            android:textColor="@color/colorPrimary"
+            android:id="@+id/send_button" />
 
         <Button
-            android:text="Receive File(s)"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:id="@+id/receive_button"
+            android:text="Receive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_margin="30dp"
-            android:textAllCaps="false" />
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:textAllCaps="false"
+            android:textColor="@color/colorPrimary"
+            android:id="@+id/receive_button" />
+
     </LinearLayout>
 </RelativeLayout>

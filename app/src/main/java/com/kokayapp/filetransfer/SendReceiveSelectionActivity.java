@@ -5,9 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
-import com.kokayapp.filetransfer.ReceiveFiles.ServerSelectionActivity;
-import com.kokayapp.filetransfer.SendFiles.ClientSelectionActivity;
-import com.kokayapp.filetransfer.SendFiles.FileSelectionActivity;
+import com.kokayapp.filetransfer.ReceiveFiles.FileReceivingActivity;
+import com.kokayapp.filetransfer.SendFiles.FileSelection.FileSelectionActivity;
 
 public class SendReceiveSelectionActivity extends AppCompatActivity {
 
@@ -27,7 +26,7 @@ public class SendReceiveSelectionActivity extends AppCompatActivity {
         findViewById(R.id.receive_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ServerSelectionActivity.class);
+                Intent intent = new Intent(getApplicationContext(), FileReceivingActivity.class);
                 startActivity(intent);
             }
         });
