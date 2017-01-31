@@ -18,10 +18,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ButtonBarLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.LruCache;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.kokayapp.filetransfer.FileInfo;
@@ -65,7 +67,7 @@ public class FileSelectionActivity extends AppCompatActivity {
     private static LruCache<Long, Bitmap> memoryCache;
     private TreeSet<FileInfo> selectedFiles = new TreeSet<>();
 
-    private FloatingActionButton nextButton;
+    private Button nextButton;
     private Toolbar toolbar;
 
     @Override
@@ -116,7 +118,7 @@ public class FileSelectionActivity extends AppCompatActivity {
             }
         });
 
-        nextButton = (FloatingActionButton) findViewById(R.id.wait_connections_button);
+        nextButton = (Button) findViewById(R.id.next_button);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

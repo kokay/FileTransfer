@@ -20,7 +20,8 @@
             android:background="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:titleTextColor="@color/textColorPrimary">
+            app:titleTextColor="@color/textColorPrimary"
+            app:title="@string/select_files">
 
         </android.support.v7.widget.Toolbar>
 
@@ -39,15 +40,16 @@
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/wait_connections_button"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/next"
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/next_button"
+        android:layout_gravity="bottom|end"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:elevation="12dp"
         android:visibility="gone"
-        app:fabSize="normal" />
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:background="@color/colorPrimaryDark"
+        android:text="Next"
+        android:textColor="@color/colorPrimary"
+        android:textAllCaps="false" />
 
 </android.support.design.widget.CoordinatorLayout>

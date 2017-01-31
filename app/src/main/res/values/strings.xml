@@ -6,8 +6,13 @@
     <string name="cancel">Cancel</string>
 
     <string name="select_device">Select a device</string>
+    <string name="select_files">Select File(s)</string>
+    <string name="sending_files">Sending file(s)</string>
+    <string name="receiving_files">Receiving file(s)</string>
     <string name="finding_the_device">Finding the devices...</string>
     <string name="connecting">Connecting...</string>
     <string name="connection_fail">Connection failed</string>
     <string name="greeting">Hello, this is File Transfer App :) </string>
+
+    <string name="waiting_for_the_connection">Waiting for the new connections...</string>
 </resources>

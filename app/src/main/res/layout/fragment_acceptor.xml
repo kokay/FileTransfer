@@ -1,38 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        android:fitsSystemWindows="false">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:title="@string/receiving_files"
-            app:titleTextColor="@color/textColorPrimary">
-
-        </android.support.v7.widget.Toolbar>
-
-    </android.support.design.widget.AppBarLayout>
+    android:layout_height="match_parent"
+    tools:context="com.kokayapp.filetransfer.SendFiles.FileSending.AcceptorFragment">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/appbar"
-        android:id="@+id/this_device_info"
         android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp">
+        android:layout_marginTop="5dp"
+        android:id="@+id/card_view">
 
         <LinearLayout
             android:orientation="vertical"
@@ -47,14 +25,14 @@
                 android:textColor="@color/textColorPrimary"
                 android:textStyle="normal|bold"
                 android:textSize="16sp"
-                android:layout_marginEnd="2dp" />
+                android:layout_marginBottom="2dp" />
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="2dp"
-                android:layout_gravity="center">
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="2dp">
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -75,12 +53,40 @@
                         android:textStyle="normal|bold"
                         android:textColor="@color/textColorPrimary" />
 
+                    <TextView
+                        android:text="SSID"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textStyle="normal|bold"
+                        android:textColor="@color/textColorPrimary" />
+
+                    <TextView
+                        android:text="Password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textStyle="normal|bold"
+                        android:textColor="@color/textColorPrimary" />
+
                 </LinearLayout>
 
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent">
+
+                    <TextView
+                        android:text=" : "
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="normal|bold"
+                        android:textColor="@color/textColorPrimary" />
+
+                    <TextView
+                        android:text=" : "
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/textColorPrimary"
+                        android:textStyle="normal|bold" />
 
                     <TextView
                         android:text=" : "
@@ -115,6 +121,18 @@
                         android:id="@+id/this_device_mac_address"
                         android:textColor="@color/textColorPrimary" />
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/this_device_ssid"
+                        android:textColor="@color/textColorPrimary" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/this_device_password"
+                        android:textColor="@color/textColorPrimary" />
+
                 </LinearLayout>
             </LinearLayout>
 
@@ -127,7 +145,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:layout_below="@+id/this_device_info">
+        android:layout_above="@+id/buttons"
+        android:layout_below="@+id/card_view">
 
         <ProgressBar
             style="?android:attr/progressBarStyle"
@@ -136,7 +155,7 @@
             android:id="@+id/progress_bar" />
 
         <TextView
-            android:text="@string/finding_the_device"
+            android:text="@string/waiting_for_the_connection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/status"
@@ -144,61 +163,27 @@
 
     </LinearLayout>
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/device_list"
-        android:visibility="visible"
-        android:layout_below="@+id/this_device_info" />
-
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/file_list"
-        android:visibility="gone"
-        android:layout_below="@+id/this_device_info" />
-
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryDark"
-        android:visibility="gone"
+        android:orientation="horizontal"
+        android:visibility="visible"
         android:id="@+id/buttons"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:gravity="bottom">
+
 
         <Button
-            android:text="Cancel"
+            android:text="Finish Sending File(s)"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             style="@style/Widget.AppCompat.Button.Borderless"
-            android:textAllCaps="false"
             android:textColor="@color/colorPrimary"
-            android:id="@+id/cancel_button"
-            android:visibility="gone"
-            android:layout_width="0dp" />
-
-        <Button
-            android:text="Receive"
+            android:id="@+id/finish_button"
+            android:visibility="visible"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            style="@style/Widget.AppCompat.Button.Borderless"
             android:textAllCaps="false"
-            android:textColor="@color/colorPrimary"
-            android:id="@+id/receive_button"
-            android:visibility="gone" />
-
-        <Button
-            android:text="Go Home"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:textAllCaps="false"
-            android:textColor="@color/colorPrimary"
-            android:id="@+id/go_home_button"
-            android:visibility="gone" />
+            android:background="@color/colorPrimaryDark" />
 
     </LinearLayout>
 </RelativeLayout>

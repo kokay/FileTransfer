@@ -46,6 +46,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.kokayapp.filetransfer.SendFiles.FileSending.AcceptorFragment.PORT_NUMBER;
+import static com.kokayapp.filetransfer.SendFiles.FileSending.AcceptorFragment.REQUEST;
+
+
 public class FileReceivingActivity extends DeviceFindingActivity {
     private static final String DIALOG_TAG = "Dialog tag";
     private final String downloadDir = Environment.getExternalStoragePublicDirectory(
@@ -297,16 +301,12 @@ public class FileReceivingActivity extends DeviceFindingActivity {
         protected Boolean doInBackground(InetAddress... params) {
             try {
                 connection = new Socket();
-                connection.connect(new InetSocketAddress(params[0], 55555));
+                connection.connect(new InetSocketAddress(params[0], PORT_NUMBER));
 
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 Writer out = new OutputStreamWriter(connection.getOutputStream());
-//
-//                String greeting = in.readLine();
-//                if (!greeting.equals(getResources().getString(R.string.greeting)))
-//                    return false;
 
-                out.write("Koji\r\n");
+                out.write(REQUEST + "\r\n");
                 out.flush();
                 for(String line = in.readLine(); !line.isEmpty(); line = in.readLine()) {
                     fileList.add(FileInfo.parse(downloadDir, line));
