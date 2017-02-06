@@ -38,13 +38,20 @@ public class AcceptorFragment extends Fragment {
     public static final int PORT_NUMBER = 55555;
     public static final int TIME_OUT = 50000; // 50 seconds
     public static final String REQUEST = "Request File List";
+    private ServerSocket server;
 
+    private FileSendingActivity fileSendingActivity;
     private Acceptor acceptor = new Acceptor();
 
-    private TextView thisDeviceName;
-    private TextView thisDeviceMacAddress;
-    private TextView thisDeviceSSID;
-    private TextView thisDevicePassword;
+    private String thisDeviceName = new String();
+    private String thisDeviceMacAddress = new String();
+    private String thisDeviceSSID = new String();
+    private String thisDevicePassword = new String();
+
+    private TextView thisDeviceNameTextView;
+    private TextView thisDeviceMacAddressTextView;
+    private TextView thisDeviceSSIDTextView;
+    private TextView thisDevicePasswordTextView;
 
     private ProgressBar progressBar;
     private TextView status;
@@ -68,10 +75,17 @@ public class AcceptorFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_acceptor, container, false);
 
-        thisDeviceName = (TextView) view.findViewById(R.id.this_device_name);
-        thisDeviceMacAddress = (TextView) view.findViewById(R.id.this_device_mac_address);
-        thisDeviceSSID = (TextView) view.findViewById(R.id.this_device_ssid);
-        thisDevicePassword = (TextView) view.findViewById(R.id.this_device_password);
+        thisDeviceNameTextView = (TextView) view.findViewById(R.id.this_device_name);
+        thisDeviceNameTextView.setText(thisDeviceName);
+
+        thisDeviceMacAddressTextView = (TextView) view.findViewById(R.id.this_device_mac_address);
+        thisDeviceMacAddressTextView.setText(thisDeviceMacAddress);
+
+        thisDeviceSSIDTextView = (TextView) view.findViewById(R.id.this_device_ssid);
+        thisDeviceSSIDTextView.setText(thisDeviceSSID);
+
+        thisDevicePasswordTextView = (TextView) view.findViewById(R.id.this_device_password);
+        thisDevicePasswordTextView.setText(thisDevicePassword);
 
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         status = (TextView) view.findViewById(R.id.status);
@@ -93,11 +107,22 @@ public class AcceptorFragment extends Fragment {
         return view;
     }
 
-    private FileSendingActivity fileSendingActivity;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         fileSendingActivity = (FileSendingActivity) context;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (!server.isClosed()) {
+            try {
+                server.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void start() {
@@ -105,18 +130,26 @@ public class AcceptorFragment extends Fragment {
     }
 
     public void updateThisDevice(WifiP2pDevice device) {
-        thisDeviceName.setText(device.deviceName);
-        thisDeviceMacAddress.setText(device.deviceAddress);
+        thisDeviceName = device.deviceName;
+        thisDeviceMacAddress = device.deviceAddress;
+
+        if(thisDeviceNameTextView != null)
+            thisDeviceNameTextView.setText(thisDeviceName);
+        if(thisDeviceMacAddressTextView != null)
+            thisDeviceMacAddressTextView.setText(thisDeviceMacAddress);
     }
 
     public void updateGroupInfo(WifiP2pGroup group) {
-        thisDeviceSSID.setText(group.getNetworkName());
-        thisDevicePassword.setText(group.getPassphrase());
+        thisDeviceSSID = group.getNetworkName();
+        thisDevicePassword = group.getPassphrase();
+
+        if(thisDeviceSSIDTextView != null)
+            thisDeviceSSIDTextView.setText(thisDeviceSSID);
+        if(thisDevicePasswordTextView != null)
+            thisDevicePasswordTextView.setText(thisDevicePassword);
     }
 
     private class Acceptor extends Thread {
-        private ServerSocket server;
-
         @Override
         public void run() {
             try {
@@ -152,8 +185,11 @@ public class AcceptorFragment extends Fragment {
             }
 
             @Override
-            protected void onPostExecute(Boolean aBoolean) {
-                fileSendingActivity.getAdapter().notifyDataSetChanged();
+            protected void onPostExecute(Boolean success) {
+                if(success) {
+                    fileSendingActivity.getAdapter().notifyDataSetChanged();
+                    fileSendingActivity.changeCurrentTab();
+                }
             }
         }
     }

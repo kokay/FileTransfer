@@ -77,7 +77,7 @@ public class FileReceivingActivity extends DeviceFindingActivity {
     private LinearLayout buttons;
     private Button cancelButton;
     private Button receiveButton;
-    private Button goHomeButton;
+    private Button closeButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +128,6 @@ public class FileReceivingActivity extends DeviceFindingActivity {
 
             }
         });
-
         receiveButton = (Button) findViewById(R.id.receive_button);
         receiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,17 +137,18 @@ public class FileReceivingActivity extends DeviceFindingActivity {
             }
         });
 
-        goHomeButton = (Button) findViewById(R.id.go_home_button);
-        goHomeButton.setOnClickListener(new View.OnClickListener() {
+        closeButton = (Button) findViewById(R.id.close_button);
+        closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplication(), SendReceiveSelectionActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                closeApplication();
             }
         });
     }
 
+    private void closeApplication() {
+        this.finishAffinity();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -197,7 +197,7 @@ public class FileReceivingActivity extends DeviceFindingActivity {
         buttons.setVisibility(View.VISIBLE);
         cancelButton.setVisibility(View.VISIBLE);
         receiveButton.setVisibility(View.GONE);
-        goHomeButton.setVisibility(View.GONE);
+        closeButton.setVisibility(View.GONE);
     }
 
     // When Receive button is shown, Cancel button should be shown too.
@@ -205,14 +205,14 @@ public class FileReceivingActivity extends DeviceFindingActivity {
         buttons.setVisibility(View.VISIBLE);
         cancelButton.setVisibility(View.VISIBLE);
         receiveButton.setVisibility(View.VISIBLE);
-        goHomeButton.setVisibility(View.GONE);
+        closeButton.setVisibility(View.GONE);
     }
 
     private void showGoHomeButton() {
         buttons.setVisibility(View.VISIBLE);
         cancelButton.setVisibility(View.GONE);
         receiveButton.setVisibility(View.GONE);
-        goHomeButton.setVisibility(View.VISIBLE);
+        closeButton.setVisibility(View.VISIBLE);
     }
 
     private void hideButtons() {
@@ -246,7 +246,7 @@ public class FileReceivingActivity extends DeviceFindingActivity {
             }
             deviceListAdapter.notifyDataSetChanged();
         }
-        if (rejected) {
+        if (rejected && coordinatorLayout != null) {
             hideButtons();
             Snackbar.make(coordinatorLayout,
                     getResources().getString(R.string.connection_fail), Snackbar.LENGTH_INDEFINITE).show();

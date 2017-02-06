@@ -33,9 +33,13 @@ import java.util.List;
 
 public class FileSendingFragment extends Fragment {
     private static final String REMOTE_IP_ADDRESS = "Remote IP Address";
+    private static final int NOT_STARTED = 0;
+    private static final int RUNNING = 1;
+    private static final int DONE = 2;
 
     private Socket connection;
     private InetAddress remoteIpAddress;
+    private int state = NOT_STARTED;
 
     private List<FileInfo> fileListLocal = new ArrayList<>();
     private FileListAdapter fileListAdapter;
@@ -48,6 +52,9 @@ public class FileSendingFragment extends Fragment {
     private Button cancelButton;
     private Button doneButton;
 
+    private View.OnClickListener readyButtonClickListener;
+    private View.OnClickListener cancelButtonClickListener;
+    private View.OnClickListener doneButtonClickListener;
 
     public FileSendingFragment() {}
 
@@ -70,6 +77,33 @@ public class FileSendingFragment extends Fragment {
 
         fileListAdapter = new FileListAdapter(getContext(), fileListLocal);
 
+        readyButtonClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                state = RUNNING;
+                showButtons();
+                sendFileListTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+        };
+
+        cancelButtonClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (sendFileListTask.getStatus() == AsyncTask.Status.RUNNING) {
+                    sendFileListTask.cancel(true);
+                } else if (sendFilesTask.getStatus() == AsyncTask.Status.RUNNING) {
+                    sendFilesTask.cancel(true);
+                }
+            }
+        };
+
+        doneButtonClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        };
+
         sendFileListTask = new SendFileListTask();
         sendFilesTask = new SendFilesTask();
     }
@@ -83,35 +117,39 @@ public class FileSendingFragment extends Fragment {
         fileListView.setAdapter(fileListAdapter);
 
         readyButton = (Button) view.findViewById(R.id.ready_button);
-        readyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                readyButton.setVisibility(View.GONE);
-                sendFileListTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            }
-        });
+        readyButton.setOnClickListener(readyButtonClickListener);
 
         cancelButton = (Button) view.findViewById(R.id.cancel_button);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+        cancelButton.setOnClickListener(cancelButtonClickListener);
 
         doneButton = (Button) view.findViewById(R.id.done_button);
-        doneButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        doneButton.setOnClickListener(doneButtonClickListener);
 
-            }
-        });
-
+        showButtons();
         return view;
     }
 
+    private void showButtons() {
+        switch (state) {
+            case NOT_STARTED :
+                readyButton.setVisibility(View.VISIBLE);
+                cancelButton.setVisibility(View.VISIBLE);
+                doneButton.setVisibility(View.GONE);
+                break;
+            case RUNNING :
+                readyButton.setVisibility(View.GONE);
+                cancelButton.setVisibility(View.VISIBLE);
+                doneButton.setVisibility(View.GONE);
+                break;
+            case DONE :
+                readyButton.setVisibility(View.GONE);
+                cancelButton.setVisibility(View.GONE);
+                doneButton.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
     public String getNickName() {
-        if (remoteIpAddress == null) return "oreigjg";
+        if (remoteIpAddress == null) return "";
         return remoteIpAddress.toString();
     }
 
@@ -129,10 +167,8 @@ public class FileSendingFragment extends Fragment {
             Writer out = null;
             try {
                 out = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
-                System.out.println("check file list size " + ((FileSendingActivity)getActivity()).getSelectedFiles().size());
                 for (FileInfo fileInfo : fileListLocal) {
                     out.write(fileInfo.getName() + " " + fileInfo.length() + "\r\n");
-                    System.out.println("check " + fileInfo.getName() + " " + fileInfo.length());
                 }
                 out.write("\r\n");
                 out.flush();
@@ -196,6 +232,7 @@ public class FileSendingFragment extends Fragment {
                     out.write(buf, 0, count);
                     fileInfo.addSoFar(count);
                     publishProgress();
+                    if (isCancelled()) return;
                 }
                 out.flush();
             } catch (IOException e) {
@@ -214,8 +251,8 @@ public class FileSendingFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            cancelButton.setVisibility(View.GONE);
-            doneButton.setVisibility(View.VISIBLE);
+            state = DONE;
+            showButtons();
             try {
                 connection.close();
             } catch (IOException e) {

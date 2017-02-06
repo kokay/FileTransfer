@@ -190,14 +190,14 @@
             android:visibility="gone" />
 
         <Button
-            android:text="Go Home"
+            android:text="Close"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:textAllCaps="false"
             android:textColor="@color/colorPrimary"
-            android:id="@+id/go_home_button"
+            android:id="@+id/close_button"
             android:visibility="gone" />
 
     </LinearLayout>

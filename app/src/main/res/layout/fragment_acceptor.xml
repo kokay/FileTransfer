@@ -158,8 +158,14 @@
             android:text="@string/waiting_for_the_connection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/status"
             android:gravity="center" />
+
 
     </LinearLayout>
 
