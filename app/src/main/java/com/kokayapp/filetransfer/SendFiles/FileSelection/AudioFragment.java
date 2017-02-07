@@ -22,12 +22,18 @@ import android.widget.TextView;
 import com.kokayapp.filetransfer.FileInfo;
 import com.kokayapp.filetransfer.R;
 
+import static com.kokayapp.filetransfer.FileInfo.TYPE_AUDIO;
 import static com.kokayapp.filetransfer.SendFiles.FileSelection.FileSelectionActivity.*;
 
 public class AudioFragment extends Fragment {
+    private int AUDIO_TITLE;
+    private int AUDIO_ARTIST;
+    private int AUDIO_DATA;
+    private int AUDIO_ALBUM_ID;
+    private Bitmap audioImage;
+
     private Cursor cursor;
     private AudioListAdapter audioListAdapter;
-    private int dataIndex;
 
     private Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
     private String[] projection = {
@@ -51,7 +57,11 @@ public class AudioFragment extends Fragment {
         super.onCreate(savedInstanceState);
         cursor = new CursorLoader(getContext(), uri,
                 projection, selection, selectionArgs, sortOrder).loadInBackground();
-        dataIndex = cursor.getColumnIndex(MediaStore.Audio.Media.DATA);
+        AUDIO_TITLE = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
+        AUDIO_ARTIST = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
+        AUDIO_DATA = cursor.getColumnIndex(MediaStore.Audio.Media.DATA);
+        AUDIO_ALBUM_ID = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
+        audioImage = BitmapFactory.decodeResource(getResources(), R.drawable.audio);
         audioListAdapter = new AudioListAdapter(getContext(), cursor);
     }
 
@@ -65,7 +75,7 @@ public class AudioFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 cursor.moveToPosition(position);
-                FileInfo fileInfo = new FileInfo(cursor.getString(dataIndex));
+                FileInfo fileInfo = new FileInfo(cursor.getString(AUDIO_DATA), TYPE_AUDIO);
                 ((FileSelectionActivity)getActivity()).selectFile(fileInfo);
                 audioListAdapter.notifyDataSetChanged();
             }
@@ -74,21 +84,10 @@ public class AudioFragment extends Fragment {
     }
 
     public class AudioListAdapter extends CursorAdapter {
-        private final int AUDIO_TITLE;
-        private final int AUDIO_ARTIST;
-        private final int AUDIO_DATA;
-        private final int AUDIO_ALBUM_ID;
-        private final Bitmap audioImage;
-
         private FileSelectionActivity fileSelectionActivity;
 
         public AudioListAdapter(Context context, Cursor c) {
             super(context, c, 0);
-            AUDIO_TITLE = c.getColumnIndex(MediaStore.Audio.Media.TITLE);
-            AUDIO_ARTIST = c.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-            AUDIO_DATA = c.getColumnIndex(MediaStore.Audio.Media.DATA);
-            AUDIO_ALBUM_ID = c.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
-            audioImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.audio);
             fileSelectionActivity = (FileSelectionActivity) context;
         }
 
@@ -101,7 +100,7 @@ public class AudioFragment extends Fragment {
         public void bindView(View view, Context context, Cursor c) {
             ((TextView) view.findViewById(R.id.audio_title)).setText(c.getString(AUDIO_TITLE));
             ((TextView) view.findViewById(R.id.audio_artist)).setText(c.getString(AUDIO_ARTIST));
-            if (fileSelectionActivity.contains(new FileInfo(c.getString(AUDIO_DATA)))) {
+            if (fileSelectionActivity.contains(new FileInfo(c.getString(AUDIO_DATA), TYPE_AUDIO))) {
                 ((CheckBox) view.findViewById(R.id.device_check_box)).setChecked(true);
             } else {
                 ((CheckBox) view.findViewById(R.id.device_check_box)).setChecked(false);

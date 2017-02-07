@@ -20,13 +20,18 @@ import android.widget.ImageView;
 import com.kokayapp.filetransfer.FileInfo;
 import com.kokayapp.filetransfer.R;
 
+import static com.kokayapp.filetransfer.FileInfo.TYPE_VIDEO;
 import static com.kokayapp.filetransfer.SendFiles.FileSelection.FileSelectionActivity.*;
 
 
 public class VideoFragment extends Fragment {
+    private int VIDEO_ID;
+    private int VIDEO_DATA;
+    private int VIDEO_TITLE;
+    private Bitmap videoImage;
+
     private Cursor cursor;
     private VideoGridAdapter videoGridAdapter;
-    private int dataIndex;
 
     private Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
     private String[] projection = {
@@ -50,8 +55,11 @@ public class VideoFragment extends Fragment {
         super.onCreate(savedInstanceState);
         cursor = new CursorLoader(getContext(), uri,
                 projection, selection, selectionArgs, sortOrder).loadInBackground();
+        VIDEO_ID = cursor.getColumnIndex(MediaStore.Video.Media._ID);
+        VIDEO_DATA = cursor.getColumnIndex(MediaStore.Video.Media.DATA);
+        VIDEO_TITLE = cursor.getColumnIndex(MediaStore.Video.Media.TITLE);
+        videoImage = BitmapFactory.decodeResource(getResources(), R.drawable.video);
         videoGridAdapter = new VideoGridAdapter(getContext(), cursor);
-        dataIndex = cursor.getColumnIndex(MediaStore.Video.Media.DATA);
     }
 
     @Override
@@ -64,7 +72,7 @@ public class VideoFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 cursor.moveToPosition(position);
-                FileInfo fileInfo = new FileInfo(cursor.getString(dataIndex));
+                FileInfo fileInfo = new FileInfo(cursor.getString(VIDEO_DATA), TYPE_VIDEO);
                 ((FileSelectionActivity)getActivity()).selectFile(fileInfo);
                 videoGridAdapter.notifyDataSetChanged();
             }
@@ -73,21 +81,11 @@ public class VideoFragment extends Fragment {
     }
 
     public class VideoGridAdapter extends CursorAdapter {
-        private final int VIDEO_ID;
-        private final int VIDEO_DATA;
-        private final int VIDEO_TITLE;
-        private final Bitmap videoImage;
-
         private FileSelectionActivity fileSelectionActivity;
 
         public VideoGridAdapter(Context context, Cursor c) {
             super(context, c, 0);
-
             fileSelectionActivity = (FileSelectionActivity) context;
-            VIDEO_ID = c.getColumnIndex(MediaStore.Video.Media._ID);
-            VIDEO_DATA = c.getColumnIndex(MediaStore.Video.Media.DATA);
-            VIDEO_TITLE = c.getColumnIndex(MediaStore.Video.Media.TITLE);
-            videoImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.video);
         }
 
         @Override
@@ -97,7 +95,7 @@ public class VideoFragment extends Fragment {
 
         @Override
         public void bindView(View view, Context context, Cursor c) {
-            if (fileSelectionActivity.contains(new FileInfo(c.getString(VIDEO_DATA)))) {
+            if (fileSelectionActivity.contains(new FileInfo(c.getString(VIDEO_DATA), TYPE_VIDEO))) {
                 view.findViewById(R.id.check_image).setVisibility(View.VISIBLE);
             } else {
                 view.findViewById(R.id.check_image).setVisibility(View.INVISIBLE);
@@ -122,5 +120,4 @@ public class VideoFragment extends Fragment {
             }
         }
     }
-
 }

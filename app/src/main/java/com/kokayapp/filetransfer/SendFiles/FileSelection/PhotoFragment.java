@@ -20,13 +20,18 @@ import android.widget.ImageView;
 import com.kokayapp.filetransfer.FileInfo;
 import com.kokayapp.filetransfer.R;
 
+import static com.kokayapp.filetransfer.FileInfo.TYPE_PHOTO;
 import static com.kokayapp.filetransfer.SendFiles.FileSelection.FileSelectionActivity.*;
 
 
 public class PhotoFragment extends Fragment {
+    private int IMAGE_ID;
+    private int IMAGE_DATA;
+    private int IMAGE_TITLE;
+    private Bitmap photoImage;
+
     private Cursor cursor;
     private PhotoGridAdapter photoGridAdapter;
-    private int dataIndex;
 
     private Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
     private String[] projection = {
@@ -39,7 +44,6 @@ public class PhotoFragment extends Fragment {
     private String[] selectionArgs = {};
     private String sortOrder = null;
 
-
     public static PhotoFragment newInstance() {
         PhotoFragment fragment = new PhotoFragment();
         return fragment;
@@ -50,8 +54,13 @@ public class PhotoFragment extends Fragment {
         super.onCreate(savedInstanceState);
         cursor = new CursorLoader(getContext(), uri,
                 projection, selection, selectionArgs, sortOrder).loadInBackground();
+
+        IMAGE_ID = cursor.getColumnIndex(MediaStore.Images.Media._ID);
+        IMAGE_DATA = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+        IMAGE_TITLE = cursor.getColumnIndex(MediaStore.Images.Media.TITLE);
+        photoImage = BitmapFactory.decodeResource(getResources(), R.drawable.photo);
+
         photoGridAdapter = new PhotoGridAdapter(getContext(), cursor);
-        dataIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
     }
 
     @Override
@@ -64,7 +73,7 @@ public class PhotoFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 cursor.moveToPosition(position);
-                FileInfo fileInfo = new FileInfo(cursor.getString(dataIndex));
+                FileInfo fileInfo = new FileInfo(cursor.getString(IMAGE_DATA), TYPE_PHOTO);
                 ((FileSelectionActivity)getActivity()).selectFile(fileInfo);
                 photoGridAdapter.notifyDataSetChanged();
             }
@@ -73,21 +82,11 @@ public class PhotoFragment extends Fragment {
     }
 
     public class PhotoGridAdapter extends CursorAdapter {
-        private final int IMAGE_ID;
-        private final int IMAGE_DATA;
-        private final int IMAGE_TITLE;
-        private final Bitmap photoImage;
 
         private FileSelectionActivity fileSelectionActivity;
 
         public PhotoGridAdapter(Context context, Cursor c) {
             super(context, c, 0);
-
-            IMAGE_ID = c.getColumnIndex(MediaStore.Images.Media._ID);
-            IMAGE_DATA = c.getColumnIndex(MediaStore.Images.Media.DATA);
-            IMAGE_TITLE = c.getColumnIndex(MediaStore.Images.Media.TITLE);
-            photoImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.photo);
-
             fileSelectionActivity = (FileSelectionActivity) context;
         }
 
@@ -98,7 +97,7 @@ public class PhotoFragment extends Fragment {
 
         @Override
         public void bindView(View view, Context context, Cursor c) {
-            if (fileSelectionActivity.contains(new FileInfo(c.getString(IMAGE_DATA)))) {
+            if (fileSelectionActivity.contains(new FileInfo(c.getString(IMAGE_DATA), TYPE_PHOTO))) {
                 view.findViewById(R.id.check_image).setVisibility(View.VISIBLE);
             } else {
                 view.findViewById(R.id.check_image).setVisibility(View.INVISIBLE);

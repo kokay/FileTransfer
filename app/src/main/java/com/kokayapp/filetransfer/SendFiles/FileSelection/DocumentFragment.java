@@ -31,9 +31,20 @@ import static com.kokayapp.filetransfer.FileInfo.*;
  */
 
 public class DocumentFragment extends Fragment {
+    private int DOCUMENT_TITLE;
+    private int DOCUMENT_SIZE;
+    private int DOCUMENT_DATA;
+    private int DOCUMENT_TYPE;
+
+    private final String PDF = "pdf";
+    private final String TXT = "text";
+    private final String DOC = "doc";
+    private Bitmap pdfImage;
+    private Bitmap docImage;
+    private Bitmap txtImage;
+
     private Cursor cursor;
     private DocumentListAdapter documentListAdapter;
-    private int dataIndex;
 
     private Uri uri = MediaStore.Files.getContentUri("external");
     private String[] projection = {
@@ -67,7 +78,16 @@ public class DocumentFragment extends Fragment {
         super.onCreate(savedInstanceState);
         cursor = new CursorLoader(getContext(), uri, projection, selection,
                 selectionArgs, sortOrder).loadInBackground();
-        dataIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
+
+        DOCUMENT_TITLE = cursor.getColumnIndex(MediaStore.Files.FileColumns.TITLE);
+        DOCUMENT_SIZE = cursor.getColumnIndex(MediaStore.Files.FileColumns.SIZE);
+        DOCUMENT_DATA = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
+        DOCUMENT_TYPE = cursor.getColumnIndex(MediaStore.Files.FileColumns.MIME_TYPE);
+
+        pdfImage = BitmapFactory.decodeResource(getResources(), R.drawable.pdf);
+        docImage = BitmapFactory.decodeResource(getResources(), R.drawable.doc);
+        txtImage = BitmapFactory.decodeResource(getResources(), R.drawable.txt);
+
         documentListAdapter = new DocumentListAdapter(getContext(), cursor);
     }
 
@@ -81,7 +101,8 @@ public class DocumentFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 cursor.moveToPosition(position);
-                FileInfo fileInfo = new FileInfo(cursor.getString(dataIndex));
+                FileInfo fileInfo = new FileInfo(cursor.getString(DOCUMENT_DATA),
+                        getType(cursor.getString(DOCUMENT_TYPE)));
                 ((FileSelectionActivity)getActivity()).selectFile(fileInfo);
                 documentListAdapter.notifyDataSetChanged();
             }
@@ -89,32 +110,29 @@ public class DocumentFragment extends Fragment {
         return view;
     }
 
-    public class DocumentListAdapter extends CursorAdapter {
-        private final int DOCUMENT_TITLE;
-        private final int DOCUMENT_SIZE;
-        private final int DOCUMENT_DATA;
-        private final int DOCUMENT_TYPE;
+    private Bitmap getImage(String mineType) {
+        if (mineType.contains(PDF)) return pdfImage;
+        if (mineType.contains(TXT)) return txtImage;
+        if (mineType.contains(DOC)) return docImage;
+        return null;
+    }
 
-        private final String PDF = "pdf";
-        private final String TXT = "text";
-        private final String DOC = "doc";
-        private final Bitmap pdfImage;
-        private final Bitmap docImage;
-        private final Bitmap txtImage;
+    private int getType(String mineType) {
+        if (mineType.contains(PDF)) return TYPE_PDF;
+        if (mineType.contains(TXT)) return TYPE_TXT;
+        if (mineType.contains(DOC)) return TYPE_DOC;
+        return TYPE_DOC;
+    }
+
+    public class DocumentListAdapter extends CursorAdapter {
+
         private FileSelectionActivity fileSelectionActivity;
 
         public DocumentListAdapter(Context context, Cursor c) {
             super(context, c, 0);
 
             fileSelectionActivity = (FileSelectionActivity) context;
-            DOCUMENT_TITLE = c.getColumnIndex(MediaStore.Files.FileColumns.TITLE);
-            DOCUMENT_SIZE = c.getColumnIndex(MediaStore.Files.FileColumns.SIZE);
-            DOCUMENT_DATA = c.getColumnIndex(MediaStore.Files.FileColumns.DATA);
-            DOCUMENT_TYPE = c.getColumnIndex(MediaStore.Files.FileColumns.MIME_TYPE);
 
-            pdfImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.pdf);
-            docImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.doc);
-            txtImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.txt);
         }
 
         @Override
@@ -127,18 +145,11 @@ public class DocumentFragment extends Fragment {
             ((TextView) view.findViewById(R.id.document_title)).setText(c.getString(DOCUMENT_TITLE));
             ((TextView) view.findViewById(R.id.document_size)).setText(getSizeText(c.getInt(DOCUMENT_SIZE)));
             ((ImageView) view.findViewById(R.id.file_image)).setImageBitmap(getImage(c.getString(DOCUMENT_TYPE)));
-            if (fileSelectionActivity.contains(new FileInfo(c.getString(DOCUMENT_DATA)))) {
+            if (fileSelectionActivity.contains(new FileInfo(c.getString(DOCUMENT_DATA), getType(c.getString(DOCUMENT_TYPE))))) {
                 ((CheckBox) view.findViewById(R.id.file_check_box)).setChecked(true);
             } else {
                 ((CheckBox) view.findViewById(R.id.file_check_box)).setChecked(false);
             }
-        }
-
-        private Bitmap getImage(String mineType) {
-            if (mineType.contains(PDF)) return pdfImage;
-            if (mineType.contains(TXT)) return txtImage;
-            if (mineType.contains(DOC)) return docImage;
-            return null;
         }
 
         private String getSizeText(long size) {

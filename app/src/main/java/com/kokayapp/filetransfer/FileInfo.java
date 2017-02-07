@@ -21,32 +21,49 @@ public class FileInfo extends File {
     public static final String MEGABYTE_STRING = "MB";
     public static final String GIGABYTE_STRING = "GB";
 
+    public static final int TYPE_PHOTO = 0;
+    public static final int TYPE_VIDEO = 1;
+    public static final int TYPE_AUDIO = 2;
+    public static final int TYPE_PDF = 3;
+    public static final int TYPE_DOC = 4;
+    public static final int TYPE_TXT = 5;
+
     private final long size;
     private long soFar;
     private boolean checked;
-    private Bitmap thumbnail;
+    private int fileType;
 
     private final long fileSizeDivisor;
     private final String type;
 
-    public FileInfo(String path) {
+    public FileInfo(String path, int fileType) {
         super(path);
         this.size = super.length();
         this.soFar = 0;
         this.checked = true;
         this.fileSizeDivisor = getFileSizeDivisor(size);
         this.type = getType(size);
-        this.thumbnail = null;
+        this.fileType = fileType;
     }
 
-    public FileInfo(String path, long size) {
+    public FileInfo(String path, long size, int fileType) {
         super(path);
         this.size = size;
         this.soFar = 0;
         this.checked = true;
         this.fileSizeDivisor = getFileSizeDivisor(size);
         this.type = getType(size);
-        this.thumbnail = null;
+        this.fileType = fileType;
+    }
+
+    public FileInfo(FileInfo rhs) {
+        super(rhs.getPath());
+        this.size = rhs.size;
+        this.soFar = rhs.soFar;
+        this.checked = true;
+        this.fileSizeDivisor = rhs.fileSizeDivisor;
+        this.type = rhs.type;
+        this.fileType = rhs.fileType;
     }
 
     private long getFileSizeDivisor(long size) {
@@ -63,18 +80,11 @@ public class FileInfo extends File {
         else return BYTE_STRING;
     }
 
-    public FileInfo(FileInfo rhs) {
-        super(rhs.getPath());
-        this.size = rhs.size;
-        this.soFar = rhs.soFar;
-        this.checked = true;
-        this.fileSizeDivisor = rhs.fileSizeDivisor;
-        this.type = rhs.type;
-    }
 
     public static FileInfo parse(String parentPath, String fileInfoStr) {
         StringTokenizer st = new StringTokenizer(fileInfoStr);
-        return new FileInfo(parentPath + st.nextToken(), Integer.parseInt(st.nextToken()));
+        return new FileInfo(parentPath + st.nextToken(),
+                Long.parseLong(st.nextToken()), Integer.parseInt(st.nextToken()));
     }
 
     public String getStringProgress() {
@@ -104,6 +114,10 @@ public class FileInfo extends File {
 
     public void addSoFar(int count) {
         soFar += count;
+    }
+
+    public int getFileType() {
+        return fileType;
     }
 
     @Override

@@ -21,7 +21,8 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:titleTextColor="@color/textColorPrimary"
-            app:title="@string/select_files">
+            app:title="@string/select_files"
+            android:theme="@style/ToolbarColored">
 
         </android.support.v7.widget.Toolbar>
 

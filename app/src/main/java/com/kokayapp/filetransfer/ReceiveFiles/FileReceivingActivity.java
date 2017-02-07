@@ -185,6 +185,7 @@ public class FileReceivingActivity extends DeviceFindingActivity {
 
     private void connect(WifiP2pDevice device) {
         deviceListView.setVisibility(View.GONE);
+        fileListView.setVisibility(View.VISIBLE);
         showProgressBar(getResources().getString(R.string.connecting));
         connectingDevice = device;
         WifiP2pConfig config = new WifiP2pConfig();
@@ -238,10 +239,13 @@ public class FileReceivingActivity extends DeviceFindingActivity {
         if (connectingDevice == null || rejected) {
             if (deviceList.size() != 0) {
                 deviceListView.setVisibility(View.VISIBLE);
+                fileListView.setVisibility(View.GONE);
+                fileList.clear();
                 hideProgressBar();
             } else {
                 manager.discoverPeers(channel, null);
                 deviceListView.setVisibility(View.GONE);
+                fileListView.setVisibility(View.GONE);
                 showProgressBar(getResources().getString(R.string.finding_the_device));
             }
             deviceListAdapter.notifyDataSetChanged();

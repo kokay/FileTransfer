@@ -168,7 +168,7 @@ public class FileSendingFragment extends Fragment {
             try {
                 out = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
                 for (FileInfo fileInfo : fileListLocal) {
-                    out.write(fileInfo.getName() + " " + fileInfo.length() + "\r\n");
+                    out.write(fileInfo.getName() + " " + fileInfo.length() + " " + fileInfo.getFileType() + "\r\n");
                 }
                 out.write("\r\n");
                 out.flush();
